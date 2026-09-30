@@ -52,7 +52,7 @@ Validation replays each task through the C++ simulator and checks image dimensio
 
 ## Qwen smoke test on Kaggle
 
-1. Import [`notebooks/visdsr_qwen3vl8b_kaggle.ipynb`](notebooks/visdsr_qwen3vl8b_kaggle.ipynb) into Kaggle. Enable a GPU accelerator and Internet. Run All with `RUN_MODE = "smoke"` (the default).
+1. Import [`notebooks/visdsr_qwen3vl8b_kaggle.ipynb`](notebooks/visdsr_qwen3vl8b_kaggle.ipynb) into Kaggle. In Kaggle’s right-side Session options, enable a GPU accelerator and turn Internet on. Run All with `RUN_MODE = "smoke"` (the default).
 2. The notebook clones this repository or reads an attached project dataset, installs the local inference dependencies, regenerates and validates pilot images, and runs the first pilot task under T-dir, R-dir, and G-dir. It prints the raw responses, strict JSON parse results, exact-match checks, latency, and GPU memory. It then stops.
 3. Review that report before changing `RUN_MODE` to `pilot`. The pilot contains 60 calls; the main study contains 400 and also requires a frozen protocol. Neither is enabled by the initial notebook run.
 
