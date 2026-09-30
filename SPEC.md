@@ -1,6 +1,6 @@
 # DSU experiment protocol
 
-**Status:** Draft. It becomes frozen only after the pilot is calibrated, the exact model IDs are recorded, and a frozen Git commit is tagged. No pilot or main model run has occurred.
+**Status:** Draft. It becomes frozen only after the pilot is calibrated, the Qwen checkpoint and settings are recorded, and a frozen Git commit is tagged. No pilot or main model run has occurred.
 
 ## Task rules
 
@@ -24,7 +24,7 @@ Images are 1024 × 1024 RGB PNGs with a white background and black marks. R-dir 
 
 The model returns JSON with the full parent map after each operation and the returned root for each `find`. T-str and G-str also return the initial parent map in `transcription`. Invalid JSON or missing/invalid fields count as incorrect in the primary measure; content errors are not retried.
 
-The **task** is the paired unit of analysis. The primary DSU measure is final-state exact match. The primary paired comparison is G-dir versus T-dir; reported differences use **T-dir minus G-dir** in percentage points. Report both accuracies, a 10,000-resample paired bootstrap 95% confidence interval for the difference, an exact McNemar p-value, and Holm correction across the two model tests.
+The **task** is the paired unit of analysis. The primary DSU measure is final-state exact match. The primary paired comparison is G-dir versus T-dir; reported differences use **T-dir minus G-dir** in percentage points. Report both accuracies, a 10,000-resample paired bootstrap 95% confidence interval for the difference, an exact McNemar p-value, and, when both model families are eventually tested, Holm correction across the two model tests.
 
 Secondary measures are per-step exact match, full-sequence success, first error step, transcription accuracy, format-error rate, and recovery after a wrong intermediate state. Secondary contrasts are T-dir minus R-dir, R-dir minus G-dir, G-str minus G-dir, T-str minus T-dir, and the difference between the latter two. Treat T-dir versus R-dir descriptively; a nonsignificant test does not establish equivalence. Wrong transcription is labeled a structure-extraction failure, without claiming access to the model's internal perception.
 

@@ -3,6 +3,8 @@
 __pycache__/
 .pytest_cache/
 results/cache/
+results/cache_snapshot.zip
+visdsr_results.zip
 results/raw/
 results/*.csv
 results/figures/*.png

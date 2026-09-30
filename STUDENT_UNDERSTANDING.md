@@ -31,6 +31,6 @@ The code and documentation currently in this repository were drafted or implemen
 - **Model evaluation:** `eval/prompts.py`, `eval/validate.py`, `eval/score.py`, `eval/run.py`, and all files in `eval/providers/`.
 - **Analysis and reproducibility:** `analysis/stats.py`, `analysis/analyze.py`, `manifest.py`, `visdsr.py`, `configs/experiment.yaml`, `environment/requirements.txt`, and `Makefile`.
 - **Test harness and examples:** `tests/naive.py`, `tests/stress.py`, `tests/examples.json`, and `tests/test_*.py`.
-- **Repository setup and documentation:** `.gitignore`, `.env.example`, `README.md`, `SPEC.md`, and this explanation. The package `__init__.py` files are empty markers.
+- **Repository setup and documentation:** `.gitignore`, `README.md`, `SPEC.md`, the Kaggle notebook, and this explanation. The package `__init__.py` files are empty markers.
 
 The C++ simulator was checked against the independent Python test oracle on the worked example and 5,000 seeded random cases. The pilot tasks and images were generated and validated locally. No real model responses or research findings exist yet. Review the implementation and be able to explain the rules and study design before presenting this work as part of an application.

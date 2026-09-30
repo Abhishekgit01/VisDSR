@@ -2,7 +2,7 @@
 
 VisDSR is a study of sequential reasoning over disjoint-set union (DSU) forests. It asks whether a model's accuracy changes when the same initial state is given as a parent map, an image of that parent map, or a forest diagram. It also tests whether asking the model to transcribe the initial state before applying operations changes its accuracy. DSU keeps each intermediate state checkable while still requiring path compression and union decisions across steps.
 
-**Status:** The C++ DSU simulator passes the worked example and 5,000 seeded random comparisons with a separate Python reference. A 12-task pilot and its 24 images have been generated and validated locally. Exact model IDs and API keys are still missing, so no live model call or research result exists. Generated pilot artifacts are excluded from Git and can be reproduced with the commands below.
+**Status:** The C++ DSU simulator passes the worked example and 5,000 seeded random comparisons with a separate Python reference. A 12-task pilot and its 24 images have been generated and validated locally. The Qwen3-VL-8B-Instruct checkpoint is pinned for a three-call Kaggle smoke test. No real model call or research result exists yet. Generated pilot artifacts are excluded from Git and can be reproduced with the commands below.
 
 ## Study design
 
@@ -22,9 +22,10 @@ The pilot design specifies 12 four-operation tasks. The main design specifies 80
 | --- | --- |
 | [`sim/dsu.cpp`](sim/dsu.cpp) | C++ simulator interface and operation protocol |
 | [`gen/`](gen/) | Seeded tasks, image rendering, and validation |
-| [`eval/`](eval/) | Prompts, provider calls, validation, and scoring |
+| [`eval/`](eval/) | Prompts, local inference, validation, and scoring |
 | [`analysis/`](analysis/) | Paired statistics and figure generation |
 | [`tests/`](tests/) | Worked cases and independent simulator checks |
+| [`notebooks/visdsr_qwen3vl8b_kaggle.ipynb`](notebooks/visdsr_qwen3vl8b_kaggle.ipynb) | Kaggle GPU setup and guarded Qwen run |
 
 ## Run locally
 
@@ -49,14 +50,14 @@ python -m gen.render --split pilot --qa
 
 Validation replays each task through the C++ simulator and checks image dimensions, geometry, pixels, filenames, and manifest hashes. The last command exports a contact sheet for visual inspection. See [`tests/examples.json`](tests/examples.json) for a worked DSU case and [`STUDENT_UNDERSTANDING.md`](STUDENT_UNDERSTANDING.md) for the implementation explanation and AI-assistance record.
 
-## From pilot to main study
+## Qwen smoke test on Kaggle
 
-1. Inspect the pilot images and model responses. Record the calibration decision before generating main tasks. The protocol allows at most one additional pilot round.
-2. Set exact model IDs in [`configs/experiment.yaml`](configs/experiment.yaml). Provide API keys through `OPENAI_API_KEY` and `ANTHROPIC_API_KEY` environment variables; `.env` is ignored by Git.
-3. Run the pilot with `python -m eval.run --split pilot --model model1 --allow-paid-run` (and `model2`). Live calls require the explicit flag. A local `--model mock` checks plumbing only and must not be used as a study result.
-4. After a complete pilot run, record the decision with `python -m gen.freeze --calibration-note '...'`. Commit and tag the frozen protocol before generating a fresh main set.
-5. Generate and render main tasks with `python -m gen.generate --split main --structure dsu` and `python -m gen.render --split main`. Then run both models, and use `python -m analysis.analyze` for the tables and accuracy figure.
+1. Import [`notebooks/visdsr_qwen3vl8b_kaggle.ipynb`](notebooks/visdsr_qwen3vl8b_kaggle.ipynb) into Kaggle. Enable a GPU accelerator and Internet. Run All with `RUN_MODE = "smoke"` (the default).
+2. The notebook clones this repository or reads an attached project dataset, installs the local inference dependencies, regenerates and validates pilot images, and runs the first pilot task under T-dir, R-dir, and G-dir. It prints the raw responses, strict JSON parse results, exact-match checks, latency, and GPU memory. It then stops.
+3. Review that report before changing `RUN_MODE` to `pilot`. The pilot contains 60 calls; the main study contains 400 and also requires a frozen protocol. Neither is enabled by the initial notebook run.
 
-Requests are shuffled with a fixed seed and cached by exact model ID, settings, prompt, and image hash. `python -m eval.run --split main --model model1 --score-only` re-scores cached responses without API calls. `python -m manifest` records source, configuration, dataset, image, and environment information once artifacts exist.
+Qwen uses [Qwen/Qwen3-VL-8B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct), pinned to the commit in [`configs/experiment.yaml`](configs/experiment.yaml), with bitsandbytes 4-bit NF4 weights, greedy decoding, and a 2,048-token output cap. The checkpoint revision and generation settings are recorded with each response. The official [Transformers Qwen3-VL guide](https://huggingface.co/docs/transformers/model_doc/qwen3_vl) describes the inference interface. The second model family is deferred until the Qwen run succeeds.
 
-Generated tasks, images, responses, and figures are excluded from Git until reviewed for release. The current repository contains no measured accuracy values. The study is limited to clean synthetic diagrams, a fixed prompt family, two planned model evaluations, and exact-match scoring; a transcription error cannot by itself identify a model's internal failure mechanism.
+The runner hashes the model ID, revision, settings, task ID, condition, exact prompt, and image bytes for each request. It writes each raw response before moving to the next request and refreshes `results/cache_snapshot.zip` after each call. The notebook exports `visdsr_results.zip` with data, results, configuration, and manifest. Download that archive or save it as a Kaggle Dataset input to resume in a new session. Kaggle runtime storage alone does not persist across fresh sessions.
+
+After an approved pilot, record the calibration decision with `python -m gen.freeze --calibration-note '...'`. Commit and tag the frozen protocol before generating main tasks. `python -m eval.run --split pilot --model mock` checks plumbing only and must not be used as a study result. Generated tasks, images, responses, and figures remain excluded from Git until reviewed for release. The current repository contains no measured accuracy values. The study is limited to clean synthetic diagrams, a fixed prompt family, and exact-match scoring; a transcription error cannot by itself identify a model's internal failure mechanism.

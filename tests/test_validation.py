@@ -47,6 +47,13 @@ class ValidationTests(unittest.TestCase):
         scored = score(self.task, "T-dir", raw)
         self.assertEqual((scored["format_error"], scored["final_correct"]), (1, 0))
 
+    def test_non_string_parent_is_a_format_error(self) -> None:
+        answer = dict(self.answer)
+        answer["steps"] = [dict(step) for step in answer["steps"]]
+        answer["steps"][0]["state"] = dict(answer["steps"][0]["state"], A=[])
+        scored = score(self.task, "T-dir", json.dumps(answer))
+        self.assertEqual(scored["failure_type"], "format_error")
+
     def test_fence_allowed_and_wrong_transcription_split(self) -> None:
         answer = dict(self.answer, transcription={"A": "B", "B": "B", "C": "C"})
         raw = "```json\n" + json.dumps(answer) + "\n```"
@@ -55,11 +62,13 @@ class ValidationTests(unittest.TestCase):
 
     def test_cache_key_changes_with_every_input(self) -> None:
         model = {"id": "example", "temperature": 0}
-        key = request_key(model, "prompt", None)[0]
-        self.assertNotEqual(key, request_key(model, "prompt changed", None)[0])
-        self.assertNotEqual(key, request_key(model, "prompt", b"image")[0])
-        self.assertNotEqual(key, request_key(dict(model, temperature=1), "prompt", None)[0])
-        self.assertNotEqual(key, request_key(dict(model, id="other"), "prompt", None)[0])
+        key = request_key(model, "prompt", None, "task1", "T-dir")[0]
+        self.assertNotEqual(key, request_key(model, "prompt changed", None, "task1", "T-dir")[0])
+        self.assertNotEqual(key, request_key(model, "prompt", b"image", "task1", "T-dir")[0])
+        self.assertNotEqual(key, request_key(dict(model, temperature=1), "prompt", None, "task1", "T-dir")[0])
+        self.assertNotEqual(key, request_key(dict(model, id="other"), "prompt", None, "task1", "T-dir")[0])
+        self.assertNotEqual(key, request_key(model, "prompt", None, "task2", "T-dir")[0])
+        self.assertNotEqual(key, request_key(model, "prompt", None, "task1", "G-dir")[0])
 
     def test_statistics(self) -> None:
         self.assertEqual(mcnemar_exact([1, 1, 0], [0, 0, 0]), (2, 0, 0.5))

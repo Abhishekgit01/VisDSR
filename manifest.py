@@ -35,7 +35,8 @@ def build() -> dict:
     main = ROOT / "data/main"
     task_file = main / "tasks.jsonl"
     versions = {}
-    for package in ("PyYAML", "Pillow", "matplotlib", "pycodestyle"):
+    for package in ("PyYAML", "Pillow", "matplotlib", "pycodestyle", "torch",
+                    "transformers", "accelerate", "bitsandbytes", "huggingface_hub"):
         try:
             versions[package] = importlib.metadata.version(package)
         except importlib.metadata.PackageNotFoundError:

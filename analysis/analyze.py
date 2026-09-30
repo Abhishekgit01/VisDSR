@@ -119,7 +119,7 @@ def analyze(models: list[str], split: str, allow_partial: bool) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--split", choices=["pilot", "main"], default="main")
-    parser.add_argument("--models", nargs="+", default=["model1", "model2"])
+    parser.add_argument("--models", nargs="+", default=["model1"])
     parser.add_argument("--allow-partial", action="store_true", help="for development only")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
