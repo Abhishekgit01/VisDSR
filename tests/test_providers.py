@@ -12,8 +12,11 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
+from PIL import Image
+
 from eval import run as runner
 from eval.providers import local
+from eval.prompts import SYSTEM
 from visdsr import config, digest
 
 
@@ -34,6 +37,19 @@ class FakeModel:
 
 
 class ProviderTests(unittest.TestCase):
+    def test_qwen_message_content_is_processor_compatible(self):
+        image_file = io.BytesIO()
+        Image.new("RGB", (2, 2), "white").save(image_file, format="PNG")
+        for image in (None, image_file.getvalue()):
+            with self.subTest(has_image=image is not None):
+                messages = local.model_messages("task prompt", image)
+                visuals = [part for message in messages for part in message["content"]
+                           if part["type"] in ("image", "video")]
+                self.assertEqual(messages[0]["content"], [{"type": "text", "text": SYSTEM}])
+                self.assertEqual(messages[1]["content"][-1],
+                                 {"type": "text", "text": "task prompt"})
+                self.assertEqual(len(visuals), int(image is not None))
+
     def test_smoke_caches_three_conditions_and_resumes(self):
         task = {"id": "pilot_test", "split": "pilot", "structure": "dsu", "size": 1,
                 "initial": {"A": "A"}, "operations": [{"kind": "find", "a": "A"}],

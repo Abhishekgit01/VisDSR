@@ -9,6 +9,17 @@ from PIL import Image
 from eval.prompts import SYSTEM
 
 
+def model_messages(prompt: str, optional_image: bytes | None) -> list[dict]:
+    """Format both chat roles as multimodal processor content parts."""
+    content = []
+    if optional_image is not None:
+        with Image.open(io.BytesIO(optional_image)) as source:
+            content.append({"type": "image", "image": source.convert("RGB")})
+    content.append({"type": "text", "text": prompt})
+    return [{"role": "system", "content": [{"type": "text", "text": SYSTEM}]},
+            {"role": "user", "content": content}]
+
+
 class LocalModel:
     def __init__(self, settings: dict):
         import torch
@@ -54,13 +65,7 @@ class LocalModel:
     def call_model(self, prompt: str, optional_image: bytes | None, settings: dict) -> dict:
         if settings["id"] != self.model_id:
             raise ValueError("model ID changed after loading")
-        content = []
-        if optional_image is not None:
-            with Image.open(io.BytesIO(optional_image)) as source:
-                content.append({"type": "image", "image": source.convert("RGB")})
-        content.append({"type": "text", "text": prompt})
-        messages = [{"role": "system", "content": SYSTEM},
-                    {"role": "user", "content": content}]
+        messages = model_messages(prompt, optional_image)
         started = time.monotonic()
         inputs = self.processor.apply_chat_template(
             messages, add_generation_prompt=True, tokenize=True,
