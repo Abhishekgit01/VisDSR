@@ -1,0 +1,26 @@
+project: visdsr
+pilot_seed: 2026092601
+main_seed: 2026092702
+run_order_seed: 2026092801
+dsu:
+  enabled: true
+  small_size: 8
+  large_size: 16
+  main_tasks_per_cell: 20
+  pilot_tasks_per_cell: 6
+  sequence_lengths: [1, 4]
+render:
+  canvas: 1024
+  background: white
+bootstrap_resamples: 10000
+models:
+  - name: model1
+    id: ""
+    provider: openai
+    temperature: 0
+    max_output_tokens: 4096
+  - name: model2
+    id: ""
+    provider: anthropic
+    temperature: 0
+    max_output_tokens: 4096

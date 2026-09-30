@@ -1,0 +1,27 @@
+[
+  {
+    "name": "compression, equal-size tie, later compression",
+    "n": 8,
+    "prelude": [
+      {"kind": "union", "a": "A", "b": "B"},
+      {"kind": "union", "a": "C", "b": "D"},
+      {"kind": "union", "a": "A", "b": "C"},
+      {"kind": "union", "a": "E", "b": "F"},
+      {"kind": "union", "a": "G", "b": "H"},
+      {"kind": "union", "a": "E", "b": "G"}
+    ],
+    "operations": [
+      {"kind": "find", "a": "D"},
+      {"kind": "union", "a": "A", "b": "E"},
+      {"kind": "find", "a": "H"}
+    ],
+    "expected": {
+      "initial": {"A":"A","B":"A","C":"A","D":"C","E":"E","F":"E","G":"E","H":"G"},
+      "steps": [
+        {"state":{"A":"A","B":"A","C":"A","D":"A","E":"E","F":"E","G":"E","H":"G"},"find_result":"A"},
+        {"state":{"A":"A","B":"A","C":"A","D":"A","E":"A","F":"E","G":"E","H":"G"}},
+        {"state":{"A":"A","B":"A","C":"A","D":"A","E":"A","F":"E","G":"A","H":"A"},"find_result":"A"}
+      ]
+    }
+  }
+]

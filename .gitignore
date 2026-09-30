@@ -1,0 +1,17 @@
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+results/cache/
+results/raw/
+results/*.csv
+results/figures/*.png
+data/pilot/*.jsonl
+data/pilot/*.csv
+data/pilot/img/*.png
+data/main/*.jsonl
+data/main/*.csv
+data/main/img/*.png
+sim/dsu
+data/pilot/contact_sheet.png
+data/main/contact_sheet.png
