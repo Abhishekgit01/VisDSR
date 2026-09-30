@@ -18,12 +18,28 @@ FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 MONO = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"
 
 
+def wrap_canonical(value: str, width: int = 52) -> list[str]:
+    """Wrap only after commas, without changing the canonical character stream."""
+    parts = value.split(",")
+    lines = []
+    current = ""
+    for index, part in enumerate(parts):
+        token = part + ("," if index < len(parts) - 1 else "")
+        if current and len(current) + len(token) > width:
+            lines.append(current)
+            current = token
+        else:
+            current += token
+    if current:
+        lines.append(current)
+    return lines
+
+
 def text_image(value: str, canvas: int) -> Image.Image:
     image = Image.new("RGB", (canvas, canvas), "white")
     draw = ImageDraw.Draw(image)
     font = ImageFont.truetype(MONO, 27)
-    # Fixed character wrap preserves the exact string when lines are joined.
-    lines = [value[i:i + 52] for i in range(0, len(value), 52)]
+    lines = wrap_canonical(value)
     for i, line in enumerate(lines):
         x, y = 48, 48 + i * 42
         box = draw.textbbox((x, y), line, font=font)
@@ -84,6 +100,8 @@ def diagram_image(state: dict[str, str], canvas: int) -> Image.Image:
         draw.ellipse((x - radius, y - radius, x + radius, y + radius),
                      fill="white", outline="black", width=3)
         box = draw.textbbox((0, 0), label, font=font)
+        if box[2] - box[0] > 2 * radius - 12 or box[3] - box[1] > 2 * radius - 12:
+            raise ValueError(f"node label {label} does not fit inside its circle")
         draw.text((x - (box[2] - box[0]) / 2 - box[0],
                    y - (box[3] - box[1]) / 2 - box[1]), label, font=font, fill="black")
     return image

@@ -10,18 +10,31 @@ class DSU {
   }
 
   int find(int x) {
-    // TODO: follow parent pointers, compress the full path, and return the root.
-    (void)x;
-    throw std::logic_error("DSU::find is not implemented");
+    int root = x;
+    while (parent_[root] != root) root = parent_[root];
+
+    // Rewrite every edge on the traversed path to point to the root.
+    while (parent_[x] != x) {
+      int next = parent_[x];
+      parent_[x] = root;
+      x = next;
+    }
+    return root;
   }
 
   void unite(int a, int b) {
-    // TODO: call find(a) and find(b) first, even if already connected.
-    // Attach the smaller root under the larger root. On an equal-size tie,
-    // attach b's root under a's root. Update size_ only after a real merge.
-    (void)a;
-    (void)b;
-    throw std::logic_error("DSU::unite is not implemented");
+    int root_a = find(a);
+    int root_b = find(b);
+    if (root_a == root_b) return;
+
+    // Keep root_a on an equal-size tie: root_b must attach below it.
+    if (size_[root_a] < size_[root_b]) {
+      int temp = root_a;
+      root_a = root_b;
+      root_b = temp;
+    }
+    parent_[root_b] = root_a;
+    size_[root_a] += size_[root_b];
   }
 
   const std::vector<int>& parents() const { return parent_; }

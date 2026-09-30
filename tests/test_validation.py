@@ -9,7 +9,7 @@ from eval.prompts import CONDITIONS, prompt
 from eval.run import request_key
 from eval.score import score
 from eval.validate import FormatError, parse
-from gen.render import diagram_image, text_image
+from gen.render import diagram_image, text_image, wrap_canonical
 from tests.naive import simulate
 from visdsr import canonical
 
@@ -70,7 +70,11 @@ class ValidationTests(unittest.TestCase):
         state = {"A": "A", "B": "A", "C": "A", "D": "C",
                  "E": "E", "F": "E", "G": "G", "H": "G"}
         self.assertEqual(diagram_image(state, 1024).size, (1024, 1024))
-        self.assertEqual(text_image(canonical(state), 1024).mode, "RGB")
+        value = canonical(state)
+        lines = wrap_canonical(value)
+        self.assertEqual("".join(lines), value)
+        self.assertTrue(all(line.endswith(",") for line in lines[:-1]))
+        self.assertEqual(text_image(value, 1024).mode, "RGB")
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 
 VisDSR is a study of sequential reasoning over disjoint-set union (DSU) forests. It asks whether a model's accuracy changes when the same initial state is given as a parent map, an image of that parent map, or a forest diagram. It also tests whether asking the model to transcribe the initial state before applying operations changes its accuracy. DSU keeps each intermediate state checkable while still requiring path compression and union decisions across steps.
 
-**Status:** The task generator, renderers, model adapters, scoring, and analysis code are in place. `find` and `unite` in [`sim/dsu.cpp`](sim/dsu.cpp) are still unimplemented. No pilot, main dataset, model run, or research result has been produced. This README describes the planned experiment and the code currently available.
+**Status:** The C++ DSU simulator passes the worked example and 5,000 seeded random comparisons with a separate Python reference. A 12-task pilot and its 24 images have been generated and validated locally. Exact model IDs and API keys are still missing, so no live model call or research result exists. Generated pilot artifacts are excluded from Git and can be reproduced with the commands below.
 
 ## Study design
 
@@ -16,12 +16,12 @@ Each task starts from a DSU forest reachable under full path compression and uni
 | T-str | Canonical JSON parent map | Initial-state transcription |
 | G-str | Forest diagram | Initial-state transcription |
 
-The separate pilot is planned to contain 12 four-operation tasks. The main set is planned to contain 80 tasks: 20 for each combination of 8 or 16 elements and 1 or 4 operations. Each main task appears in all five conditions. The primary comparison is paired final-state exact-match accuracy for **G-dir versus T-dir**. The analysis code also computes a paired bootstrap confidence interval and an exact McNemar test; the other contrasts and error measures are described in [`SPEC.md`](SPEC.md). These are analysis plans, not findings.
+The pilot design specifies 12 four-operation tasks. The main design specifies 80 tasks: 20 for each combination of 8 or 16 elements and 1 or 4 operations. Each main task appears in all five conditions. The primary comparison is paired final-state exact-match accuracy for **G-dir versus T-dir**. The analysis code also computes a paired bootstrap confidence interval and an exact McNemar test; the other contrasts and error measures are described in [`SPEC.md`](SPEC.md). These are analysis plans, not findings.
 
 | Path | Purpose |
 | --- | --- |
 | [`sim/dsu.cpp`](sim/dsu.cpp) | C++ simulator interface and operation protocol |
-| [`gen/`](gen/) | Seeded tasks and image rendering |
+| [`gen/`](gen/) | Seeded tasks, image rendering, and validation |
 | [`eval/`](eval/) | Prompts, provider calls, validation, and scoring |
 | [`analysis/`](analysis/) | Paired statistics and figure generation |
 | [`tests/`](tests/) | Worked cases and independent simulator checks |
@@ -35,19 +35,19 @@ python -m pip install -r environment/requirements.txt
 make build
 make test
 make lint
+make stress
 ```
 
-`make test` checks the Python infrastructure. After implementing `find` and `unite`, run `make stress` to compare the C++ simulator against a separate test oracle on the worked example and 5,000 seeded random cases. The stress test and task generation currently stop at the unimplemented DSU methods.
-
-Once the simulator passes:
+`make test` checks the Python infrastructure. `make stress` compares the C++ simulator against a separate test oracle on the worked example and 5,000 seeded random cases. The current simulator passes both. To regenerate the pilot:
 
 ```bash
 python -m gen.generate --split pilot --structure dsu
 python -m gen.render --split pilot
+python -m gen.validate --split pilot
 python -m gen.render --split pilot --qa
 ```
 
-The last command exports a contact sheet for visual inspection. See [`tests/examples.json`](tests/examples.json) for a worked DSU case.
+Validation replays each task through the C++ simulator and checks image dimensions, geometry, pixels, filenames, and manifest hashes. The last command exports a contact sheet for visual inspection. See [`tests/examples.json`](tests/examples.json) for a worked DSU case and [`STUDENT_UNDERSTANDING.md`](STUDENT_UNDERSTANDING.md) for the implementation explanation and AI-assistance record.
 
 ## From pilot to main study
 
@@ -59,4 +59,4 @@ The last command exports a contact sheet for visual inspection. See [`tests/exam
 
 Requests are shuffled with a fixed seed and cached by exact model ID, settings, prompt, and image hash. `python -m eval.run --split main --model model1 --score-only` re-scores cached responses without API calls. `python -m manifest` records source, configuration, dataset, image, and environment information once artifacts exist.
 
-Generated tasks, images, responses, and figures are excluded from Git until reviewed for release. The current repository contains no measured accuracy values. The study is limited to clean synthetic diagrams, a fixed prompt family, two selected models, and exact-match scoring; a transcription error cannot by itself identify a model's internal failure mechanism.
+Generated tasks, images, responses, and figures are excluded from Git until reviewed for release. The current repository contains no measured accuracy values. The study is limited to clean synthetic diagrams, a fixed prompt family, two planned model evaluations, and exact-match scoring; a transcription error cannot by itself identify a model's internal failure mechanism.
