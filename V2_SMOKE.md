@@ -35,9 +35,9 @@ T-dir and R-dir returned identical raw strings. Each copied the initial parent m
 
 The G-dir response matches every step of these operations applied to a fresh forest in which each element is its own parent. The supplied diagram instead has two four-element sets, rooted at B and C. This comparison describes the output pattern; it does not prove why the model used that starting state.
 
-### Decision and next run
+### Smoke decision and diagnostic procedure
 
-Keep calibration and main disabled while checking these specific failures. Use the eight bounded diagnostics in [`eval/diagnose.py`](eval/diagnose.py):
+After the smoke, calibration and main stayed disabled while we checked these failures. The eight diagnostics have now completed; their audit is below. The procedure used the bounded checks in [`eval/diagnose.py`](eval/diagnose.py):
 
 1. Initial-map extraction from text.
 2. Initial-map extraction from rendered text.
@@ -77,4 +77,43 @@ The recovery script installs the pinned dependencies, requires the existing or r
 
 Download the updated `visdsr_v2_results.zip` from Output and review the diagnostic responses. The eight checks stop automatically; they do not launch calibration. The original three smoke caches remain intact. This module and review document do not change any protected study source, so the existing v2 backup remains compatible.
 
-InternVL's v2 smoke is still pending. No v2 calibration, freeze, or main run has occurred. [`STUDY_V2.md`](STUDY_V2.md) is the preserved pre-run plan; this file records subsequent observations.
+## Qwen diagnostic review: 3 October 2026
+
+All eight planned checks completed on `pilot2_0004`, with six valid outputs and two correct answers. These are targeted checks on one forest, excluded from official study scores; they are not an estimate of general model accuracy.
+
+| Check | Valid output | Correct | Latency | Output tokens |
+| --- | ---: | ---: | ---: | ---: |
+| Initial-map extraction, text | Yes | Yes | 6.94 s | 37 |
+| Initial-map extraction, rendered text | Yes | Yes | 59.47 s | 37 |
+| Initial-map extraction, diagram | Yes | No | 60.90 s | 52 |
+| Roots and set sizes, text | Yes | No | 6.86 s | 46 |
+| Isolated find, text | Yes | No | 8.65 s | 48 |
+| Isolated union, text | Yes | No | 12.78 s | 84 |
+| Isolated find, rendered text | No | No | 375.24 s | 2,048 |
+| Isolated find, diagram | No | No | 373.43 s | 2,048 |
+
+The diagram extraction reported H and D as roots, although the source forest is rooted at B and C. The root-counting response reported sizes B=7 and H=2 for an eight-element forest; the correct sizes are B=4 and C=4. The isolated text find returned B and left E pointing to D; it must return C and set E's parent to C. The isolated text union left the map unchanged; it must set G's parent and C's parent to B.
+
+Both image finds returned repeated extra steps for a task containing one operation, then reached the 2,048-token cap and ended with incomplete JSON. The rendered-text find repeated the initial map; the diagram find began from singleton parents. All original responses are preserved. Correct transcription in separate calls does not establish which state the model used during the operation calls, and these outputs do not establish an internal failure mechanism.
+
+### Diagnostic archive and replay
+
+The reviewed private `visdsr_v2_diagnostics_complete.zip` has SHA-256 `e16e1fe4cb4b808e21c01caf6fc8556af88e17bf0fe1d340336be021f53dd960` and size 216,503 bytes. It contains 41 payload files and the export marker, including eight diagnostic records and their summary. All 32 payload files from the original smoke archive are byte-identical. The three official smoke scores remain unchanged.
+
+All payload checksums and 21 protected source hashes match. Each diagnostic's exact prompts, image hash, task hash, expected answer, model revision, request key, and diagnostic-code hash passed replay checks. The diagnostic source SHA-256 is `4cee9793285518d69352ef84e383105bf185f670c574d7c493e877e0529e7419`. The archive's run manifest records code commit `3875c2f90c4a25b59ff0eaf87911f372bb71795a`.
+
+An isolated local checkout restored all files. Score-only replay reproduced all eight diagnostic results and the three original smoke scores with model loading explicitly disabled. The independent Python DSU reference matched all 12 calibration task answers and all four isolated-operation answers. No tasks or images were regenerated during this audit; the Graphviz reproduction limitation described above still applies.
+
+The recorded model revision, NF4 quantization, two Tesla T4 GPUs, dependencies, and greedy generation parameters match the earlier smoke. Image requests include pixel tensors and image-grid metadata. The largest per-device allocated peak was 5.18 GiB. Total diagnostic inference latency was 904.28 seconds (15.07 minutes), excluding loading; no OOM was reported. Both failed image finds used all 2,048 allowed output tokens. The archived summary has `new_calls=0` because it was produced by the final score-only replay; the eight timestamped raw responses are present.
+
+### Next live run: InternVL smoke
+
+Keep Qwen calibration disabled while reviewing the second model. Do not select a new prompt, change the scoring rules, or repeat failed responses to obtain a better result. The next run is the already planned InternVL v2 smoke on the identical forest and image bytes.
+
+1. Import [`internvl35_v2_kaggle.ipynb`](notebooks/internvl35_v2_kaggle.ipynb) into a new Kaggle notebook. Enable a free GPU and Internet.
+2. Attach `visdsr_v2_diagnostics_complete.zip` as the only VisDSR results input, using a private Dataset. The restore checks accept its original ZIP and Kaggle's extracted layout.
+3. Leave `MODEL = "model2"`, `STAGE = "smoke"`, `SMOKE_REVIEWED = False`, and `MAIN_APPROVED = False` in the first code cell.
+4. Run the notebook's cells from top to bottom. The unmodified notebook makes three InternVL requests, preserves Qwen's responses, and exports automatically. Its stage guards stop before calibration.
+5. Download the new `visdsr_v2_results.zip` and review InternVL's raw responses, formatting, tokens, memory, and latency before deciding about calibration.
+
+No v2 calibration, freeze, or main run has occurred. [`STUDY_V2.md`](STUDY_V2.md) is the preserved pre-run plan; this file records subsequent observations.
