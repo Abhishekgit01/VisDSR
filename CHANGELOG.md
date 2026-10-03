@@ -8,7 +8,8 @@
 - Added Qwen and InternVL Kaggle notebooks that default to three smoke calls and export after each inference chunk.
 - Audited the three-call Qwen v2 smoke: all responses validated, all were wrong. Text and rendered text copied the initial state; the diagram response matched operations on a fresh forest.
 - Added a standalone Kaggle diagnostic recovery script so a reset kernel can restore the saved smoke without relying on notebook variables.
-- Audited all eight Qwen v2 diagnostics and preserved the three original smoke responses. Text and rendered-text transcription were correct; diagram extraction and all five DSU checks failed. InternVL v2 smoke is next; no calibration or main study has occurred.
+- Audited all eight Qwen v2 diagnostics and preserved the three original smoke responses. Text and rendered-text transcription were correct; diagram extraction and all five DSU checks failed. No calibration or main study was run during these checks.
+- Audited the InternVL v2 smoke and unchanged Qwen payloads. Approved one fixed representative calibration set per model in bounded chunks; main remains blocked pending calibration review and freeze.
 
 ## V1 calibration and feasibility
 

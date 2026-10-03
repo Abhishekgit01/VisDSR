@@ -106,9 +106,9 @@ An isolated local checkout restored all files. Score-only replay reproduced all 
 
 The recorded model revision, NF4 quantization, two Tesla T4 GPUs, dependencies, and greedy generation parameters match the earlier smoke. Image requests include pixel tensors and image-grid metadata. The largest per-device allocated peak was 5.18 GiB. Total diagnostic inference latency was 904.28 seconds (15.07 minutes), excluding loading; no OOM was reported. Both failed image finds used all 2,048 allowed output tokens. The archived summary has `new_calls=0` because it was produced by the final score-only replay; the eight timestamped raw responses are present.
 
-### Next live run: InternVL smoke
+### InternVL smoke procedure
 
-Keep Qwen calibration disabled while reviewing the second model. Do not select a new prompt, change the scoring rules, or repeat failed responses to obtain a better result. The next run is the already planned InternVL v2 smoke on the identical forest and image bytes.
+After the Qwen diagnostics, calibration stayed disabled until the second model smoke was reviewed. The following procedure completed the planned InternVL v2 smoke on the identical forest and image bytes. Its audit and the calibration decision follow below.
 
 1. Import [`internvl35_v2_kaggle.ipynb`](notebooks/internvl35_v2_kaggle.ipynb) into a new Kaggle notebook. Enable a free GPU and Internet.
 2. Attach `visdsr_v2_diagnostics_complete.zip` as the only VisDSR results input, using a private Dataset. The restore checks accept its original ZIP and Kaggle's extracted layout.
@@ -116,4 +116,58 @@ Keep Qwen calibration disabled while reviewing the second model. Do not select a
 4. Run the notebook's cells from top to bottom. The unmodified notebook makes three InternVL requests, preserves Qwen's responses, and exports automatically. Its stage guards stop before calibration.
 5. Download the new `visdsr_v2_results.zip` and review InternVL's raw responses, formatting, tokens, memory, and latency before deciding about calibration.
 
-No v2 calibration, freeze, or main run has occurred. [`STUDY_V2.md`](STUDY_V2.md) is the preserved pre-run plan; this file records subsequent observations.
+## InternVL smoke review: 3 October 2026
+
+InternVL completed the same three conditions on `pilot2_0004`. All three responses are syntactically valid JSON; T-dir and R-dir satisfy the required schema, while G-dir contains an extra `find_result` on the second operation, a union. None has a correct final map or a fully correct step under official scoring.
+
+| Condition | Valid study output | Final exact match | Correct steps | Latency | Input / output tokens |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| T-dir | 1/1 | 0/1 | 0/4 | 22.28 s | 558 / 168 |
+| R-dir | 1/1 | 0/1 | 0/4 | 51.23 s | 3,093 / 168 |
+| G-dir | 0/1 | 0/1 | 0/4 | 53.57 s | 3,093 / 172 |
+
+T-dir returns the correct roots for both finds, but misses the required path compression and meaningful union. Its final map also compresses E and F to B without operations traversing their paths, while leaving G pointing to H. R-dir has the same incorrect final map and returns D for the first find, whose root is C. The G-dir parent maps match these operations applied to fresh singleton parents, with the additional schema error described above. This comparison describes the returned states; it does not identify an internal cause.
+
+### InternVL runtime and archive
+
+- Model: `OpenGVLab/InternVL3_5-8B-HF`.
+- Revision: `741a7d03020411e666c6109218ab71e08151ef86`.
+- Code: `6b75e2dddb43afffe7e15cabc2d4892bbc43372b`.
+- Hardware: two Tesla T4 GPUs, each reporting 14.56 GiB. Logged model devices are GPU 0 and GPU 1, without CPU offload.
+- Quantization: bitsandbytes 4-bit NF4; logged compute dtype `torch.bfloat16`, framework-default attention.
+- Generation: `do_sample=False`, `num_beams=1`, `max_new_tokens=2048`.
+- Each image request has ten RGB 448-by-448 input tiles, with the same source PNG hash used for Qwen. Processor tensors and token counts differ across architectures.
+- Mean latency: 42.36 seconds; total inference latency: 127.08 seconds, excluding loading.
+- Largest per-device allocated peak: 7.34 GiB. The image calls recorded approximately 5.09 GiB on GPU 0 and 7.34 GiB on GPU 1; these are separate device measurements.
+- All three responses begin with JSON, with no reasoning preamble. No response reached the output cap and no OOM was reported.
+- Environment: Python 3.13.15, PyTorch 2.11.0+cu128, Transformers 4.57.1, accelerate 1.14.0, bitsandbytes 0.50.2, huggingface_hub 0.36.2.
+
+The reviewed private `visdsr_v2_results (1).zip` has SHA-256 `613688b82925076dcb211980814499ba0e024227519f429aa9b1bc8811be2828` and size 229,146 bytes. It contains 46 payload files and the export marker: the previous 41 files plus three InternVL caches, their raw-response export, and the smoke score CSV. Every earlier Qwen/data payload is byte-identical.
+
+All payload checksums and 21 protected source hashes match. Both models used identical task hashes, system prompts, user prompts, prompt hashes, and source-image hashes in each condition. Model IDs, pinned revisions, and effective generation parameters match the configuration. In an isolated checkout, score-only replay reproduced all six official smoke scores and both raw exports with model loading explicitly disabled. The twelve task answers also matched the independent DSU reference.
+
+The Kaggle log records successful full image validation with Graphviz 2.43.0. Local inspection of the preserved smoke diagram agrees with the initial parent map. No images were regenerated for this audit; the local Graphviz-version limitation remains as recorded above.
+
+### Reviewed decision: one representative calibration
+
+The smoke checks establish working, cached inference with verified inputs and known output errors. They do not establish adequate DSU accuracy or a modality effect. Both models have so far been scored on one shared four-operation task, so the observed zero final accuracy cannot estimate performance across the planned difficulty cells.
+
+Proceed with the single fixed calibration set from `STUDY_V2.md`: twelve tasks, all five conditions, and sixty responses per model, including the three already cached smoke responses. Keep the tasks, images, prompts, model settings, output schema, and scorer unchanged. The root and update failures are retained; no additional prompt-selection round or failure retries are planned. A second diagnostic round on the same forest would not measure the remaining difficulty cells or structured conditions, so the next evidence comes from the representative calibration.
+
+Start with InternVL in the current session and collect at most twenty new calls per chunk. Then run Qwen calibration from the newest combined backup. There are 57 new calls remaining per model. Calibration will measure accuracy, format failures, and latency by condition, element count, and operation count before any main-run decision. Neither model is excluded because of its smoke score.
+
+Main remains blocked. After both models reach 60/60 calibration responses, audit all raw requests and scores, review whether the baseline supports the intended modality comparison, and record the main decision before freezing. If the text baseline remains at the floor, the report must describe that limitation; these smoke checks do not authorize a claim of modality equivalence.
+
+### Run the next InternVL calibration chunk
+
+Use the current InternVL notebook with its saved project files. In its first code cell, change only `STAGE` to `"calibration"` and `SMOKE_REVIEWED` to `True`. Keep `MODEL = "model2"`, `MAIN_APPROVED = False`, and `NEW_CALLS_PER_CHUNK = 20`.
+
+1. Run the edited first code cell.
+2. Run the code cell under **3. Build and validate tasks and images**. It validates the restored calibration data and reports 60 requests planned, three caches already present.
+3. Run the code cell under **4. Run the selected stage**. It reuses the three smoke responses and makes at most twenty new calls. After a complete first chunk, progress should be **23/60**.
+4. Download the automatically exported `visdsr_v2_results.zip` after the chunk. Keep the newest backup outside the session before continuing.
+5. Rerun only the selected-stage cell for the next chunk, downloading each export. Full chunks advance to **43/60**, then **60/60** with seventeen new calls in the last chunk. On interruption, retain the partial export and resume matching caches.
+
+If the runtime has reset, attach the newest combined export as the only VisDSR results input and rerun notebook setup before the selected-stage cell. The newest reviewed combined backup at this point is `visdsr_v2_results (1).zip`, not the earlier Qwen-only diagnostic ZIP.
+
+The reviewed archive contains six official smoke responses and eight Qwen diagnostic responses. The full calibration stage, freeze, and main run have not started. [`STUDY_V2.md`](STUDY_V2.md) is the preserved pre-run plan; this file records subsequent observations and the decision to start calibration.
