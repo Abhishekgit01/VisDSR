@@ -80,8 +80,10 @@ def run(split: str, model_name: str, dry_run: bool, limit: int | None,
         raise RuntimeError("review the three-call Qwen smoke report before a full evaluation; then pass --after-smoke-review")
     local = None
     if not mock and not (dry_run or score_only):
+        print(f"Loading {model['id']} on CUDA...", flush=True)
         from eval.providers.local import LocalModel
         local = LocalModel(model)
+        print("Model ready; starting requests", flush=True)
         model = local.settings
     mapping = {} if dry_run else image_mapping(split)
     cache_folder = ROOT / "results/cache"
@@ -89,7 +91,7 @@ def run(split: str, model_name: str, dry_run: bool, limit: int | None,
     raw_records = []
     new_calls = 0
     cache_hits = 0
-    for task_id, condition in pairs:
+    for position, (task_id, condition) in enumerate(pairs, 1):
         task = by_id[task_id]
         text = prompt(task, condition)
         image = None
@@ -106,6 +108,7 @@ def run(split: str, model_name: str, dry_run: bool, limit: int | None,
             cache_hits += cache_path.exists()
             continue
         if cache_path.exists():
+            from_cache = True
             record = json.loads(cache_path.read_text())
             if record["task_id"] != task_id or record["condition"] != condition:
                 raise RuntimeError(f"cache key collision or stale metadata: {cache_path}")
@@ -113,6 +116,7 @@ def run(split: str, model_name: str, dry_run: bool, limit: int | None,
         elif score_only:
             raise RuntimeError(f"missing cache for {task_id}/{condition}")
         else:
+            from_cache = False
             if mock:
                 answer = {"steps": [{"op": i, **step} for i, step in enumerate(task["steps"], 1)]}
                 if condition.endswith("str"):
@@ -131,6 +135,8 @@ def run(split: str, model_name: str, dry_run: bool, limit: int | None,
             temporary.replace(cache_path)
             snapshot_cache(cache_folder)
             new_calls += 1
+        print(f"{position}/{len(pairs)} {task_id}/{condition}: "
+              f"{'cached' if from_cache else 'saved'}", flush=True)
         raw_records.append(record)
         rows.append({"model": model_name, "model_id": model["id"],
                      **score(task, condition, record["raw_text"])})

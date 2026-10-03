@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import io
+import os
 import time
 
 from PIL import Image
@@ -22,6 +23,9 @@ def model_messages(prompt: str, optional_image: bytes | None) -> list[dict]:
 
 class LocalModel:
     def __init__(self, settings: dict):
+        # Kaggle also ships TensorFlow; this experiment uses only PyTorch.
+        os.environ["USE_TF"] = "0"
+        os.environ["USE_TORCH"] = "1"
         import torch
         from huggingface_hub import model_info
         import transformers
