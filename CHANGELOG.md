@@ -2,7 +2,6 @@
 
 ## Unreleased
 
-- Prepared a pinned Qwen3-VL-8B-Instruct Kaggle smoke run with local 4-bit inference, response caching, and export.
-- Removed paid inference adapters. The task generator, prompts, images, and scoring rules are unchanged.
-
-No model results have been collected.
+- Completed the first Qwen pilot on 12 four-operation tasks. T-dir, R-dir, and G-dir each scored 0/12 on final-state exact match; the protocol remains unfrozen.
+- Prepared a separate 12-task pilot with one- and two-operation sequences. The DSU rules, renderer, prompts, model settings, and strict scorer are unchanged.
+- Kept generated tasks, images, raw responses, and scores out of Git. The reviewed first-pilot archive is identified by its SHA-256 checksum in the README.

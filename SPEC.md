@@ -1,6 +1,6 @@
 # DSU experiment protocol
 
-**Status:** Draft. It becomes frozen only after the pilot is calibrated, the Qwen checkpoint and settings are recorded, and a frozen Git commit is tagged. No pilot or main model run has occurred.
+**Status:** Draft. The first four-operation Qwen pilot is complete; all three direct conditions scored 0/12 on final-state exact match. A second and final calibration round with shorter sequences is prepared. The protocol is unfrozen, and no main run has occurred.
 
 ## Task rules
 
@@ -12,11 +12,13 @@ Initial states are built from valid union sequences by `sim/dsu.cpp`; arbitrary 
 
 | Split | 8 elements | 16 elements |
 | --- | ---: | ---: |
-| Pilot, 4 operations | 6 tasks | 6 tasks |
+| Pilot 1, 4 operations | 6 tasks | 6 tasks |
+| Pilot 2, 1 operation | 3 tasks | 3 tasks |
+| Pilot 2, 2 operations | 3 tasks | 3 tasks |
 | Main, 1 operation | 20 tasks | 20 tasks |
 | Main, 4 operations | 20 tasks | 20 tasks |
 
-Pilot and main use different seeds, and the main generator rejects pilot overlap. Every main task appears in T-dir, R-dir, G-dir, T-str, and G-str. The initial forest must contain a depth-two node and at least two non-singleton trees; large states need at least three trees. One-operation tasks alternate between meaningful unions and finds at depth two or more. Four-operation tasks include both a meaningful union and a depth-two path-compressing find, with at most one no-op union.
+Both pilot rounds and the main study use different seeds, and the generator rejects overlap across splits. Every main task appears in T-dir, R-dir, G-dir, T-str, and G-str. The initial forest must contain a depth-two node and at least two non-singleton trees; large states need at least three trees. Pilot 2 balances three meaningful unions and three depth-two finds across its six one-operation tasks. Every two-operation pilot task has a depth-two path-compressing find followed by a meaningful union; each size cell includes an equal-size tie. The planned main one-operation tasks alternate between meaningful unions and depth-two finds. Four-operation tasks include both a meaningful union and a depth-two find, with at most one no-op union. Main difficulty remains provisional until calibration is reviewed.
 
 Images are 1024 × 1024 RGB PNGs with a white background and black marks. R-dir renders the exact canonical string supplied in T-dir. G-dir and G-str use the same diagram bytes. Forest arrows point from child to parent. No result is encoded by color.
 
@@ -30,4 +32,4 @@ Secondary measures are per-step exact match, full-sequence success, first error 
 
 ## Freeze
 
-Use at most two pilot/calibration rounds. After calibration, record the decision in `FREEZE.json`, commit the protocol, and tag that commit `v1.0-frozen`. Generate the 80 main tasks with the separate main seed only then. Do not add conditions, prompts, metrics, structures, or models to the main study after freeze. Record any necessary bug fix in Git history and state whether it changes generated data or results.
+Use at most two pilot/calibration rounds. Pilot 2 uses a new seed and shorter sequences while keeping the first pilot intact. The pilot 1 prompt wording and strict scorer are retained verbatim, so the structured-format failures remain visible. A separate diagnostic may remove an extra `find_result` from union steps or parse a JSON-string transcription to assess content, but it never changes official scores. After both rounds are reviewed, record the decision in `FREEZE.json`, commit the protocol, and tag that commit `v1.0-frozen`. Generate the 80 main tasks with the separate main seed only then. Do not add conditions, prompts, metrics, structures, or models to the main study after freeze. Record any necessary bug fix in Git history and state whether it changes generated data or results.
