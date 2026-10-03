@@ -54,7 +54,7 @@ Validation replays each task through the C++ simulator and checks image dimensio
 
 The first pilot is complete and preserved in the private `visdsr_results.zip` export. The exact archive reviewed for calibration has SHA-256 `a7a3eaa8b3d51f1d18ff57bc7bbba97735cdb077da5936bd751ec86e33974fa8`. Its 60 responses matched the saved scores, and the direct conditions were at floor. The second round uses a new seed and shorter operation sequences. It uses the same task generator, renderer, prompts, DSU rules, model settings, and scoring. It is calibration data, not a main-study result.
 
-1. Import the latest [`notebooks/visdsr_qwen3vl8b_kaggle.ipynb`](notebooks/visdsr_qwen3vl8b_kaggle.ipynb) into Kaggle. Enable a GPU and Internet. Attach the first-pilot `visdsr_results.zip` as a Kaggle input.
+1. Import the latest [`notebooks/visdsr_qwen3vl8b_kaggle.ipynb`](notebooks/visdsr_qwen3vl8b_kaggle.ipynb) into Kaggle. Enable a GPU and Internet. Upload the first-pilot `visdsr_results.zip` as a private Kaggle Dataset and add it as a notebook input. Kaggle may unpack it; the notebook accepts either form.
 2. Run All with the default `RUN_MODE = "pilot2_smoke"`. It generates and validates the new tasks, makes three calls, exports a cumulative zip, and stops for review.
 3. After reviewing that smoke report, set `RUN_MODE = "pilot2"` and `PILOT2_SMOKE_REVIEWED = True`. Run the settings cell, then the evaluation and export cells. The full round has 60 task-condition pairs and skips the three cached smoke calls.
 4. Download the new `/kaggle/working/visdsr_results.zip`. The notebook prints strict scores by operation count and writes a separate diagnostic report. No freeze decision is made automatically.
