@@ -1,4 +1,4 @@
-"""Local Qwen3-VL inference for the Kaggle smoke and later runs."""
+"""Local multimodal inference for the Kaggle smoke and later runs."""
 from __future__ import annotations
 
 import io
@@ -38,6 +38,8 @@ class LocalModel:
             raise RuntimeError("a CUDA GPU is required for local model inference")
         if settings["do_sample"] is not False or settings["num_beams"] != 1:
             raise ValueError("VisDSR requires greedy decoding")
+        if settings["provider"] not in ("qwen3_vl", "internvl35_hf"):
+            raise ValueError(f"unsupported local provider: {settings['provider']}")
         self.torch = torch
         self.transformers = transformers
         self.settings = dict(settings)
@@ -52,19 +54,22 @@ class LocalModel:
             bnb_4bit_quant_type="nf4",
             bnb_4bit_compute_dtype=dtype,
         )
-        self.processor = AutoProcessor.from_pretrained(self.model_id, revision=self.revision)
-        if settings["provider"] != "qwen3_vl":
-            raise ValueError(f"unsupported local provider: {settings['provider']}")
-        from transformers import Qwen3VLForConditionalGeneration
-        model_class = Qwen3VLForConditionalGeneration
-        self.model = model_class.from_pretrained(
-            self.model_id,
-            revision=self.revision,
-            quantization_config=quantization,
-            dtype=dtype,
-            device_map="auto",
-            attn_implementation="sdpa",
-        ).eval()
+        model_options = {"revision": self.revision, "quantization_config": quantization,
+                         "dtype": dtype, "device_map": "auto"}
+        if settings["provider"] == "qwen3_vl":
+            from transformers import Qwen3VLForConditionalGeneration
+            model_class = Qwen3VLForConditionalGeneration
+            self.processor = AutoProcessor.from_pretrained(self.model_id, revision=self.revision)
+            model_options["attn_implementation"] = "sdpa"
+            self.attention = "sdpa"
+        else:
+            from transformers import AutoModelForImageTextToText
+            model_class = AutoModelForImageTextToText
+            self.processor = AutoProcessor.from_pretrained(
+                self.model_id, revision=self.revision, trust_remote_code=True)
+            model_options["trust_remote_code"] = True
+            self.attention = "framework default"
+        self.model = model_class.from_pretrained(self.model_id, **model_options).eval()
 
     def call_model(self, prompt: str, optional_image: bytes | None, settings: dict) -> dict:
         if settings["id"] != self.model_id:
@@ -99,7 +104,7 @@ class LocalModel:
             "model_id": self.model_id,
             "revision": self.revision,
             "settings": {**self.settings, "compute_dtype": self.compute_dtype,
-                         "attention": "sdpa", "transformers_version": self.transformers.__version__,
+                         "attention": self.attention, "transformers_version": self.transformers.__version__,
                          "torch_version": self.torch.__version__,
                          "generation_config": self.model.generation_config.to_dict()},
             "gpu_peak_bytes": max(gpu_peaks),

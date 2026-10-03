@@ -37,7 +37,7 @@ class FakeModel:
 
 
 class ProviderTests(unittest.TestCase):
-    def test_qwen_message_content_is_processor_compatible(self):
+    def test_message_content_is_processor_compatible(self):
         image_file = io.BytesIO()
         Image.new("RGB", (2, 2), "white").save(image_file, format="PNG")
         for image in (None, image_file.getvalue()):
@@ -105,6 +105,12 @@ class ProviderTests(unittest.TestCase):
                 self.assertEqual(len(FakeModel.calls), 6)
                 self.assertTrue((root / "results/scores_smoke_model1.csv").exists())
                 self.assertTrue((root / "results/scores_pilot2_smoke_model1.csv").exists())
+                with patch.object(runner, "read_tasks", return_value=[second]):
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        runner.run("pilot2", "model2", False, None, False, True, False)
+                self.assertEqual(len(FakeModel.calls), 9)
+                self.assertTrue((root / "results/scores_pilot2_smoke_model2.csv").exists())
+                self.assertEqual(len(list((root / "results/cache").glob("*.json"))), 9)
 
     def test_full_run_requires_smoke_review(self):
         with patch.object(runner, "read_tasks", return_value=[{"id": "pilot_test"}]), \

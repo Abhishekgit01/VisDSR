@@ -78,7 +78,7 @@ def run(split: str, model_name: str, dry_run: bool, limit: int | None,
     elif limit is not None:
         pairs = pairs[:limit]
     if not mock and not (dry_run or score_only or smoke or after_smoke_review):
-        raise RuntimeError("review the three-call Qwen smoke report before a full evaluation; then pass --after-smoke-review")
+        raise RuntimeError("review the three-call model smoke report before a full evaluation; then pass --after-smoke-review")
     local = None
     if not mock and not (dry_run or score_only):
         print(f"Loading {model['id']} on CUDA...", flush=True)
@@ -159,7 +159,7 @@ def run(split: str, model_name: str, dry_run: bool, limit: int | None,
     print(f"scored {len(rows)} requests: {cache_hits} cached, {new_calls} new; {output}")
     if smoke:
         from eval.validate import FormatError, parse
-        print(f"VISDSR QWEN {split.upper()} SMOKE TEST")
+        print(f"VISDSR {split.upper()} SMOKE TEST")
         print(f"Model: {model['id']}")
         print(f"Revision: {model['revision']}")
         print(f"GPU: {local.torch.cuda.get_device_name(0)}")
