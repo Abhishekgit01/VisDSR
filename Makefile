@@ -1,4 +1,4 @@
-.PHONY: build test stress lint pilot render-pilot manifest
+.PHONY: build test stress lint pilot render-pilot pilot2 render-pilot2 manifest
 
 build:
 	g++ -std=c++17 -O2 -Wall -Wextra -pedantic sim/dsu.cpp -o sim/dsu
@@ -17,6 +17,12 @@ pilot:
 
 render-pilot:
 	python -m gen.render --split pilot
+
+pilot2:
+	python -m gen.generate --split pilot2 --structure dsu
+
+render-pilot2:
+	python -m gen.render --split pilot2
 
 manifest:
 	python -m manifest

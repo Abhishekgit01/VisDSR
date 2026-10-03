@@ -11,7 +11,7 @@ import subprocess
 from PIL import Image, ImageDraw, ImageFont
 
 from gen.visual_checks import check_image, check_layout
-from visdsr import ROOT, canonical, config, digest, read_tasks
+from visdsr import ROOT, SPLITS, canonical, config, digest, read_tasks
 
 
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
@@ -162,7 +162,7 @@ def contact_sheet(split: str, count: int, seed: int) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--split", choices=["pilot", "main"], required=True)
+    parser.add_argument("--split", choices=SPLITS, required=True)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--limit", type=int)
     parser.add_argument("--qa", action="store_true", help="export a 20-image contact sheet")

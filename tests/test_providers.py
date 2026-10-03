@@ -89,6 +89,22 @@ class ProviderTests(unittest.TestCase):
                            (root / "results/cache").glob("*.json")]
                 self.assertEqual({record["condition"] for record in records},
                                  {"T-dir", "R-dir", "G-dir"})
+                second = dict(task, id="pilot2_test", split="pilot2")
+                second_dir = root / "data/pilot2"
+                (second_dir / "img").mkdir(parents=True)
+                for name in ("text.png", "diagram.png"):
+                    (second_dir / "img" / name).write_bytes(image)
+                second_manifest = dict(manifest, task_id=second["id"])
+                with (second_dir / "manifest.csv").open("w", newline="") as stream:
+                    writer = csv.DictWriter(stream, fieldnames=list(second_manifest))
+                    writer.writeheader()
+                    writer.writerow(second_manifest)
+                with patch.object(runner, "read_tasks", return_value=[second]):
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        runner.run("pilot2", "model1", False, None, False, True, False)
+                self.assertEqual(len(FakeModel.calls), 6)
+                self.assertTrue((root / "results/scores_smoke_model1.csv").exists())
+                self.assertTrue((root / "results/scores_pilot2_smoke_model1.csv").exists())
 
     def test_full_run_requires_smoke_review(self):
         with patch.object(runner, "read_tasks", return_value=[{"id": "pilot_test"}]), \

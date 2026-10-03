@@ -10,14 +10,15 @@ import zipfile
 
 from eval.prompts import CONDITIONS, SYSTEM, prompt
 from eval.score import score
-from visdsr import ROOT, canonical, config, digest, read_tasks
+from visdsr import ROOT, SPLITS, canonical, config, digest, read_tasks
 
 
 def order(split: str, tasks: list[dict]) -> list[tuple[str, str]]:
     cfg = config()
     path = ROOT / "data" / split / "run_order.csv"
     pairs = [(task["id"], condition) for task in tasks for condition in CONDITIONS]
-    random.Random(cfg["run_order_seed"]).shuffle(pairs)
+    seed = cfg["pilot2_run_order_seed"] if split == "pilot2" else cfg["run_order_seed"]
+    random.Random(seed).shuffle(pairs)
     if path.exists():
         with path.open(newline="") as source:
             recorded = [(row["task_id"], row["condition"]) for row in csv.DictReader(source)]
@@ -71,8 +72,8 @@ def run(split: str, model_name: str, dry_run: bool, limit: int | None,
              "do_sample": False, "max_output_tokens": 4096} if mock else models[model_name]
     pairs = order(split, tasks)
     if smoke:
-        if split != "pilot" or mock:
-            raise ValueError("smoke requires pilot split and a local model")
+        if split not in ("pilot", "pilot2") or mock:
+            raise ValueError("smoke requires pilot or pilot2 split and a local model")
         pairs = [(tasks[0]["id"], condition) for condition in ("T-dir", "R-dir", "G-dir")]
     elif limit is not None:
         pairs = pairs[:limit]
@@ -143,11 +144,12 @@ def run(split: str, model_name: str, dry_run: bool, limit: int | None,
     if dry_run:
         print(f"{len(pairs)} requests planned, {cache_hits} cache entries already present")
         return
-    filename = (f"scores_smoke_{model_name}.csv" if smoke else
+    smoke_tag = "smoke" if split == "pilot" else "pilot2_smoke"
+    filename = (f"scores_{smoke_tag}_{model_name}.csv" if smoke else
                 f"scores_{model_name}.csv" if split == "main" else f"scores_{split}_{model_name}.csv")
     output = ROOT / "results" / filename
     output.parent.mkdir(parents=True, exist_ok=True)
-    raw_path = ROOT / "results/raw" / f"{'smoke' if smoke else split}_{model_name}.jsonl"
+    raw_path = ROOT / "results/raw" / f"{smoke_tag if smoke else split}_{model_name}.jsonl"
     raw_path.parent.mkdir(parents=True, exist_ok=True)
     raw_path.write_text("".join(canonical(record) + "\n" for record in raw_records))
     with output.open("w", newline="") as target:
@@ -157,7 +159,7 @@ def run(split: str, model_name: str, dry_run: bool, limit: int | None,
     print(f"scored {len(rows)} requests: {cache_hits} cached, {new_calls} new; {output}")
     if smoke:
         from eval.validate import FormatError, parse
-        print("VISDSR QWEN SMOKE TEST")
+        print(f"VISDSR QWEN {split.upper()} SMOKE TEST")
         print(f"Model: {model['id']}")
         print(f"Revision: {model['revision']}")
         print(f"GPU: {local.torch.cuda.get_device_name(0)}")
@@ -179,20 +181,20 @@ def run(split: str, model_name: str, dry_run: bool, limit: int | None,
         average = sum(record["latency_s"] for record in raw_records) / len(raw_records)
         print(f"Average latency: {average:.2f} s")
         print(f"Peak VRAM: {max(record['gpu_peak_bytes'] for record in raw_records) / 2**30:.2f} GiB")
-        print(f"Estimated time for 60 pilot calls: {average * 60 / 60:.2f} min, excluding loading")
+        print(f"Estimated time for 60 {split} calls: {average * 60 / 60:.2f} min, excluding loading")
         print(f"Estimated time for 400 main calls: {average * 400 / 60:.2f} min, excluding loading")
         print("Blockers: none observed during these three calls")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--split", choices=["pilot", "main"], required=True)
+    parser.add_argument("--split", choices=SPLITS, required=True)
     parser.add_argument("--structure", choices=["dsu"], default="dsu")
     parser.add_argument("--model", required=True)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--limit", type=int)
     parser.add_argument("--score-only", action="store_true")
-    parser.add_argument("--smoke", action="store_true", help="run one pilot task in T-dir, R-dir, and G-dir only")
+    parser.add_argument("--smoke", action="store_true", help="run one task in T-dir, R-dir, and G-dir only")
     parser.add_argument("--after-smoke-review", action="store_true")
     args = parser.parse_args()
     if args.limit is not None and args.limit <= 0:

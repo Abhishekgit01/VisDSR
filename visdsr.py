@@ -8,6 +8,7 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parent
+SPLITS = ("pilot", "pilot2", "main")
 
 
 def config() -> dict:
@@ -23,7 +24,7 @@ def digest(data: bytes) -> str:
 
 
 def read_tasks(split: str) -> list[dict]:
-    if split not in ("pilot", "main"):
-        raise ValueError("split must be pilot or main")
+    if split not in SPLITS:
+        raise ValueError(f"split must be one of {', '.join(SPLITS)}")
     path = ROOT / "data" / split / "tasks.jsonl"
     return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]

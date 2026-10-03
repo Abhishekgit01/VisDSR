@@ -10,7 +10,7 @@ from PIL import Image, ImageChops
 from gen.generate import metadata, run_sim, valid_task
 from gen.render import diagram_image, layout, text_image
 from gen.visual_checks import check_image
-from visdsr import ROOT, canonical, config, digest, read_tasks
+from visdsr import ROOT, SPLITS, canonical, config, digest, read_tasks
 
 
 def task_signature(task: dict) -> str:
@@ -20,8 +20,13 @@ def task_signature(task: dict) -> str:
 def validate(split: str) -> dict[str, int]:
     cfg = config()
     tasks = read_tasks(split)
-    per_cell = cfg["dsu"]["pilot_tasks_per_cell"] if split == "pilot" else cfg["dsu"]["main_tasks_per_cell"]
-    lengths = [4] if split == "pilot" else cfg["dsu"]["sequence_lengths"]
+    if split == "pilot":
+        per_cell, lengths = cfg["dsu"]["pilot_tasks_per_cell"], [4]
+    elif split == "pilot2":
+        per_cell = cfg["dsu"]["pilot2_tasks_per_cell"]
+        lengths = cfg["dsu"]["pilot2_sequence_lengths"]
+    else:
+        per_cell, lengths = cfg["dsu"]["main_tasks_per_cell"], cfg["dsu"]["sequence_lengths"]
     expected_cells = {(size, length): per_cell for size in ("small", "large") for length in lengths}
     actual_cells = {cell: 0 for cell in expected_cells}
     if len(tasks) != sum(expected_cells.values()):
@@ -87,18 +92,28 @@ def validate(split: str) -> dict[str, int]:
                 raise ValueError(f"rendered pixels differ from task state: {name}")
     if actual_cells != expected_cells or seen_images != expected_names:
         raise ValueError("task cells or image mapping are incomplete")
-    other = "main" if split == "pilot" else "pilot"
-    other_file = ROOT / "data" / other / "tasks.jsonl"
-    if other_file.exists():
-        overlap = {task_signature(task) for task in tasks} & {task_signature(task) for task in read_tasks(other)}
-        if overlap:
-            raise ValueError("pilot and main contain overlapping tasks")
+    if split == "pilot2":
+        one_op = [task for task in tasks if len(task["operations"]) == 1]
+        if sum(task["operations"][0]["kind"] == "find" for task in one_op) != 3:
+            raise ValueError("pilot2 one-operation finds and unions are not balanced")
+        for size in ("small", "large"):
+            two_op = [task for task in tasks
+                      if task["size"] == size and len(task["operations"]) == 2]
+            if not any(task["difficulty"]["equal_size_ties"] for task in two_op):
+                raise ValueError(f"pilot2 {size} two-operation tasks lack an equal-size tie")
+    for other in SPLITS:
+        other_file = ROOT / "data" / other / "tasks.jsonl"
+        if other != split and other_file.exists():
+            overlap = {task_signature(task) for task in tasks} & {
+                task_signature(task) for task in read_tasks(other)}
+            if overlap:
+                raise ValueError(f"{split} and {other} contain overlapping tasks")
     return {"tasks": len(tasks), "images": len(seen_images), "checked_edges": checked_edges}
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--split", choices=["pilot", "main"], required=True)
+    parser.add_argument("--split", choices=SPLITS, required=True)
     args = parser.parse_args()
     result = validate(args.split)
     print(f"validated {args.split}: {result['tasks']} tasks, {result['images']} anonymous RGB images, "

@@ -16,4 +16,8 @@ data/main/*.csv
 data/main/img/*.png
 sim/dsu
 data/pilot/contact_sheet.png
+data/pilot2/*.jsonl
+data/pilot2/*.csv
+data/pilot2/img/*.png
+data/pilot2/contact_sheet.png
 data/main/contact_sheet.png

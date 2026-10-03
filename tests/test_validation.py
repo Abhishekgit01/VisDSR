@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import unittest
 
+from analysis.pilot2 import diagnostic, diagnostic_transcription
 from analysis.stats import holm, mcnemar_exact, paired_bootstrap
 from eval.prompts import CONDITIONS, prompt
 from eval.run import request_key
@@ -59,6 +60,32 @@ class ValidationTests(unittest.TestCase):
         raw = "```json\n" + json.dumps(answer) + "\n```"
         self.assertEqual(score(self.task, "G-str", raw)["failure_type"],
                          "wrong_transcription_final_correct")
+
+    def test_pilot2_diagnostic_does_not_change_strict_scoring(self) -> None:
+        answer = {"steps": [dict(step) for step in self.answer["steps"]],
+                  "transcription": self.task["initial"]}
+        answer["steps"][0]["find_result"] = "A"
+        raw = json.dumps(answer)
+        self.assertEqual(score(self.task, "T-str", raw)["format_error"], 1)
+        changes, repaired = diagnostic(self.task, "T-str", raw)
+        self.assertEqual(changes, ["removed union find_result"])
+        self.assertEqual(repaired["final_correct"], 1)
+
+        answer["steps"][0].pop("find_result")
+        answer["transcription"] = json.dumps(self.task["initial"])
+        raw = json.dumps(answer)
+        self.assertEqual(score(self.task, "G-str", raw)["format_error"], 1)
+        changes, repaired = diagnostic(self.task, "G-str", raw)
+        self.assertEqual(changes, ["parsed JSON-string transcription"])
+        self.assertEqual(repaired["transcription_correct"], 1)
+        self.assertEqual(repaired["final_correct"], 1)
+        self.assertEqual(diagnostic_transcription(self.task, raw), 1)
+
+        answer["transcription"] = "A->A, B->B, C->C"
+        changes, repaired = diagnostic(self.task, "G-str", json.dumps(answer))
+        self.assertEqual(changes, [])
+        self.assertIsNone(repaired)
+        self.assertIsNone(diagnostic_transcription(self.task, json.dumps(answer)))
 
     def test_cache_key_changes_with_every_input(self) -> None:
         model = {"id": "example", "temperature": 0}

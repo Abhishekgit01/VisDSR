@@ -6,7 +6,7 @@ import json
 import random
 import subprocess
 
-from visdsr import ROOT, canonical, config, digest
+from visdsr import ROOT, SPLITS, canonical, config, digest
 
 
 def root(state: dict[str, str], label: str) -> tuple[str, int]:
@@ -122,8 +122,12 @@ def build(split: str, dry_run: bool = False, limit: int | None = None) -> list[d
     cfg = config()
     rng = random.Random(cfg[f"{split}_seed"])
     dsu = cfg["dsu"]
-    per_cell = dsu["pilot_tasks_per_cell"] if split == "pilot" else dsu["main_tasks_per_cell"]
-    lengths = [4] if split == "pilot" else dsu["sequence_lengths"]
+    if split == "pilot":
+        per_cell, lengths = dsu["pilot_tasks_per_cell"], [4]
+    elif split == "pilot2":
+        per_cell, lengths = dsu["pilot2_tasks_per_cell"], dsu["pilot2_sequence_lengths"]
+    else:
+        per_cell, lengths = dsu["main_tasks_per_cell"], dsu["sequence_lengths"]
     cells = [("small", dsu["small_size"], count) for count in lengths]
     cells += [("large", dsu["large_size"], count) for count in lengths]
     plan = [{"size": name, "n": n, "operations": count, "tasks": per_cell} for name, n, count in cells]
@@ -139,6 +143,9 @@ def build(split: str, dry_run: bool = False, limit: int | None = None) -> list[d
             raise RuntimeError("experiment config changed after freeze")
         if frozen["prompt_sha256"] != digest((ROOT / "eval/prompts.py").read_bytes()):
             raise RuntimeError("experiment prompts changed after freeze")
+        pilot2 = ROOT / "data/pilot2/tasks.jsonl"
+        if not pilot2.exists() or frozen.get("pilot2_tasks_sha256") != digest(pilot2.read_bytes()):
+            raise RuntimeError("pilot2 tasks changed or are missing after freeze")
     tasks = []
     signatures = set()
     target = sum(cell["tasks"] for cell in plan)
@@ -149,7 +156,10 @@ def build(split: str, dry_run: bool = False, limit: int | None = None) -> list[d
             for _ in range(500):
                 prelude = initial_prelude(n, rng)
                 initial = run_sim(n, prelude, [])["initial"]
-                operations = choose_operations(initial, count, index % 2 == 0, rng)
+                prefer_union = index % 2 == 0
+                if split == "pilot2" and count == 1 and name == "large":
+                    prefer_union = not prefer_union
+                operations = choose_operations(initial, count, prefer_union, rng)
                 truth = run_sim(n, prelude, operations)
                 signature = canonical([truth["initial"], operations])
                 task = {"id": f"{split}_{len(tasks) + 1:04d}", "split": split,
@@ -157,7 +167,10 @@ def build(split: str, dry_run: bool = False, limit: int | None = None) -> list[d
                         "prelude": prelude, "initial": truth["initial"],
                         "operations": operations, "steps": truth["steps"]}
                 task["difficulty"] = metadata(task["initial"], operations, task["steps"])
-                if signature not in signatures and valid_task(task, count):
+                # Each two-operation pilot2 size cell includes an equal-size tie.
+                needs_tie = split == "pilot2" and count == 2 and index == 0
+                tie_ok = not needs_tie or task["difficulty"]["equal_size_ties"] > 0
+                if signature not in signatures and valid_task(task, count) and tie_ok:
                     signatures.add(signature)
                     tasks.append(task)
                     break
@@ -169,12 +182,15 @@ def build(split: str, dry_run: bool = False, limit: int | None = None) -> list[d
         raise RuntimeError("main dataset has no equal-size union tie cases")
     output = ROOT / "data" / split / "tasks.jsonl"
     output.parent.mkdir(parents=True, exist_ok=True)
-    if split == "main":
-        pilot = ROOT / "data/pilot/tasks.jsonl"
-        pilot_signatures = {canonical([item["initial"], item["operations"]])
-                            for item in (json.loads(line) for line in pilot.read_text().splitlines())}
-        if signatures & pilot_signatures:
-            raise RuntimeError("pilot/main task overlap detected")
+    for other in SPLITS:
+        if other == split:
+            continue
+        other_path = ROOT / "data" / other / "tasks.jsonl"
+        if other_path.exists():
+            other_signatures = {canonical([item["initial"], item["operations"]])
+                                for item in (json.loads(line) for line in other_path.read_text().splitlines())}
+            if signatures & other_signatures:
+                raise RuntimeError(f"{split}/{other} task overlap detected")
     output.write_text("".join(canonical(task) + "\n" for task in tasks))
     print(f"wrote {len(tasks)}/{target} {split} tasks to {output}")
     return tasks
@@ -182,7 +198,7 @@ def build(split: str, dry_run: bool = False, limit: int | None = None) -> list[d
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--split", choices=["pilot", "main"], required=True)
+    parser.add_argument("--split", choices=SPLITS, required=True)
     parser.add_argument("--structure", choices=["dsu"], default="dsu")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--limit", type=int)

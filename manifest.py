@@ -33,6 +33,7 @@ def git_commit() -> str | None:
 
 def build() -> dict:
     main = ROOT / "data/main"
+    pilot2 = ROOT / "data/pilot2"
     task_file = main / "tasks.jsonl"
     versions = {}
     for package in ("PyYAML", "Pillow", "matplotlib", "pycodestyle", "torch",
@@ -56,9 +57,11 @@ def build() -> dict:
         "run_dates_utc": {"first": min(dates) if dates else None,
                           "last": max(dates) if dates else None},
         "main_tasks_sha256": digest(task_file.read_bytes()) if task_file.exists() else None,
+        "pilot2_tasks_sha256": digest((pilot2 / "tasks.jsonl").read_bytes()) if (pilot2 / "tasks.jsonl").exists() else None,
+        "pilot2_image_sha256": {path.name: digest(path.read_bytes()) for path in sorted((pilot2 / "img").glob("*.png"))},
         "main_image_sha256": {path.name: digest(path.read_bytes()) for path in sorted((main / "img").glob("*.png"))},
         "run_order_sha256": {split: digest(path.read_bytes()) if path.exists() else None
-                             for split in ("pilot", "main")
+                             for split in ("pilot", "pilot2", "main")
                              for path in [ROOT / "data" / split / "run_order.csv"]},
         "python_version": platform.python_version(),
         "package_versions": versions,

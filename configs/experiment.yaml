@@ -1,13 +1,17 @@
 project: visdsr
 pilot_seed: 2026092601
+pilot2_seed: 2026100301
 main_seed: 2026092702
 run_order_seed: 2026092801
+pilot2_run_order_seed: 2026100302
 dsu:
   enabled: true
   small_size: 8
   large_size: 16
   main_tasks_per_cell: 20
   pilot_tasks_per_cell: 6
+  pilot2_tasks_per_cell: 3
+  pilot2_sequence_lengths: [1, 2]
   sequence_lengths: [1, 4]
 render:
   canvas: 1024

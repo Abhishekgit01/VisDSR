@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 from analysis.stats import holm, mcnemar_exact, paired_bootstrap
 from eval.prompts import CONDITIONS
-from visdsr import ROOT, config
+from visdsr import ROOT, SPLITS, config
 
 plt.switch_backend("Agg")
 
@@ -49,8 +49,9 @@ def analyze(models: list[str], split: str, allow_partial: bool) -> None:
                 raise ValueError(f"duplicate result for {row['task_id']}/{condition}")
             by_condition[condition][row["task_id"]] = row
         ids = set.intersection(*(set(by_condition[condition]) for condition in CONDITIONS))
-        if not ids or (split == "main" and len(ids) != 80 and not allow_partial):
-            raise ValueError(f"{model}: expected 80 complete paired main tasks; found {len(ids)}")
+        expected = 80 if split == "main" else 12
+        if not ids or (len(ids) != expected and not allow_partial):
+            raise ValueError(f"{model}: expected {expected} complete paired {split} tasks; found {len(ids)}")
         if any(set(by_condition[condition]) != ids for condition in CONDITIONS):
             raise ValueError(f"{model}: incomplete condition pairs")
         ids = sorted(ids)
@@ -92,8 +93,11 @@ def analyze(models: list[str], split: str, allow_partial: bool) -> None:
         comparisons[index]["holm_p"] = adjusted
     result = ROOT / "results"
     result.mkdir(exist_ok=True)
-    write_csv(result / "summary.csv", summary)
-    write_csv(result / "comparisons.csv", comparisons)
+    suffix = "_pilot2" if split == "pilot2" else ""
+    summary_path = result / f"summary{suffix}.csv"
+    comparisons_path = result / f"comparisons{suffix}.csv"
+    write_csv(summary_path, summary)
+    write_csv(comparisons_path, comparisons)
     figure_dir = result / "figures"
     figure_dir.mkdir(exist_ok=True)
     fig, ax = plt.subplots(figsize=(10, 5))
@@ -111,14 +115,15 @@ def analyze(models: list[str], split: str, allow_partial: bool) -> None:
     ax.set_ylim(0, 105)
     ax.legend()
     fig.tight_layout()
-    fig.savefig(figure_dir / "accuracy.png", dpi=160)
+    figure_path = figure_dir / f"accuracy{suffix}.png"
+    fig.savefig(figure_path, dpi=160)
     plt.close(fig)
-    print(f"wrote {result / 'summary.csv'}, {result / 'comparisons.csv'}, and accuracy.png")
+    print(f"wrote {summary_path}, {comparisons_path}, and {figure_path}")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--split", choices=["pilot", "main"], default="main")
+    parser.add_argument("--split", choices=SPLITS, default="main")
     parser.add_argument("--models", nargs="+", default=["model1"])
     parser.add_argument("--allow-partial", action="store_true", help="for development only")
     parser.add_argument("--dry-run", action="store_true")
