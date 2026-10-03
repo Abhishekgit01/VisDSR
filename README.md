@@ -65,7 +65,7 @@ The runner hashes the model ID, revision, settings, task ID, condition, exact pr
 
 The separate [`InternVL notebook`](notebooks/internvl35_visdsr.ipynb) uses the official fully trained [OpenGVLab/InternVL3_5-8B-HF](https://huggingface.co/OpenGVLab/InternVL3_5-8B-HF) checkpoint at a pinned revision. It uses the same existing pilot2 task and prompt bytes and makes only T-dir, R-dir, and G-dir calls for one task. The Kaggle GPU result has not yet been observed.
 
-1. Import the InternVL notebook into Kaggle, enable GPU and Internet, and attach only the private `visdsr_pilot2_complete.zip` as Input. Kaggle may unpack the archive; the notebook accepts either form.
+1. Import the InternVL notebook into Kaggle, enable GPU and Internet, and attach only the private `visdsr_results.zip` as Input. Kaggle may unpack the archive; the notebook accepts either form. The upload archive keeps individual cache records and omits the redundant nested `results/cache_snapshot.zip`, which can conflict with Kaggle extraction.
 2. Run All. Review the three strict parse results, model revision, GPU memory, and latency before considering more calls.
 3. Download `visdsr_internvl35_smoke.zip` from `/kaggle/working` Output. The notebook uses a distinct filename so an earlier archive is easy to distinguish.
 
