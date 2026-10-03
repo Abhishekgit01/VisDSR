@@ -50,16 +50,30 @@ Keep calibration and main disabled while checking these specific failures. Use t
 
 All checks reuse the smoke forest, source images, pinned model, system instruction, and generation settings. Isolated operations use the existing simulator for truth. The helper writes separate diagnostic caches and checks bare JSON; these results are excluded from every official study score. It resumes matching caches and exports after each new response. Existing request mismatches stop before any new inference. There is no repeated diagnostic search for a desirable score.
 
-In the current Qwen Kaggle notebook, keep `STAGE = "smoke"`. Add one code cell below the existing cells and run it:
+Enable GPU and Internet in Kaggle. If the runtime restarted and lost its project files, attach the saved `visdsr_v2_results.zip` as a private Dataset through Add Input. The following cell defines its own imports and paths; it does not require earlier notebook variables. Replace the previous diagnostic cell with it and run only this cell:
 
 ```python
-run_command("git", "pull", "--ff-only", "origin", "study-v2")
-try:
-    run_command(sys.executable, "-m", "eval.diagnose",
-                "--model", "model1", "--export", str(EXPORT))
-finally:
-    export_results()
+import subprocess
+import sys
+from pathlib import Path
+
+root = Path("/kaggle/working/VisDSR_v2")
+repo = "https://github.com/Abhishekgit01/VisDSR.git"
+
+if (root / ".git").exists():
+    subprocess.run(["git", "-C", str(root), "pull", "--ff-only",
+                    "origin", "study-v2"], check=True)
+elif not root.exists() or not any(root.iterdir()):
+    subprocess.run(["git", "clone", "--depth", "1", "--branch",
+                    "study-v2", repo, str(root)], check=True)
+elif not (root / "notebooks/kaggle_diagnostics.py").exists():
+    raise RuntimeError("This project copy has no Git checkout; use the current study-v2 project")
+
+subprocess.run([sys.executable, str(root / "notebooks/kaggle_diagnostics.py"),
+                "--model", "model1"], check=True)
 ```
+
+The recovery script installs the pinned dependencies, requires the existing or restored smoke caches, builds the simulator, and resumes diagnostics. A missing backup stops before any model call. It preserves the original images and exports progress after interruption. It does not regenerate tasks or images or rerun the smoke through inference.
 
 Download the updated `visdsr_v2_results.zip` from Output and review the diagnostic responses. The eight checks stop automatically; they do not launch calibration. The original three smoke caches remain intact. This module and review document do not change any protected study source, so the existing v2 backup remains compatible.
 

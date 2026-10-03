@@ -7,6 +7,7 @@
 - Added bounded inference, token and device logging, checked archive restore, and a freeze audit against raw caches.
 - Added Qwen and InternVL Kaggle notebooks that default to three smoke calls and export after each inference chunk.
 - Audited the three-call Qwen v2 smoke: all responses validated, all were wrong. Text and rendered text copied the initial state; the diagram response matched operations on a fresh forest.
+- Added a standalone Kaggle diagnostic recovery script so a reset kernel can restore the saved smoke without relying on notebook variables.
 - Added eight separately cached diagnostic checks before full calibration. No v2 calibration or main study has occurred.
 
 ## V1 calibration and feasibility
