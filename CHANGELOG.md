@@ -6,7 +6,8 @@
 - Matched calibration to the 8/16-element and 1/4-operation main design.
 - Added bounded inference, token and device logging, checked archive restore, and a freeze audit against raw caches.
 - Added Qwen and InternVL Kaggle notebooks that default to three smoke calls and export after each inference chunk.
-- No v2 model inference or main study has occurred.
+- Audited the three-call Qwen v2 smoke: all responses validated, all were wrong. Text and rendered text copied the initial state; the diagram response matched operations on a fresh forest.
+- Added eight separately cached diagnostic checks before full calibration. No v2 calibration or main study has occurred.
 
 ## V1 calibration and feasibility
 
