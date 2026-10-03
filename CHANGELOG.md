@@ -7,3 +7,4 @@
 - Noted that the structured prompt does not explicitly state the JSON-object type of `transcription`; official scores remain unchanged.
 - Ran and audited the three-call InternVL3.5 HF smoke test on an existing pilot2 task. T-dir was strict-correct; R-dir and G-dir failed strict JSON parsing after emitting `<think>` text. No full pilot or main run followed.
 - Kept generated tasks, images, raw responses, and scores out of Git. SHA-256 checksums for the reviewed private archives are in the README.
+- Wrote a pilot and feasibility report from the audited results; the main study remains stopped.

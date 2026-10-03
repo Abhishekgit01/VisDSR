@@ -4,6 +4,8 @@ VisDSR is a study of sequential reasoning over disjoint-set union (DSU) forests.
 
 **Status:** The C++ DSU simulator passed a worked example and 5,000 seeded comparisons with a separate Python reference. Qwen3-VL-8B-Instruct completed two calibration pilots; its shorter second pilot scored T-dir 1/12, R-dir 0/12, and G-dir 0/12. An InternVL3.5 smoke test on one task returned strict-correct JSON for T-dir but invalid output for both image conditions. The protocol remains unfrozen, and no full InternVL pilot or main run has occurred. Model responses and generated data remain outside Git.
 
+The [pilot and feasibility report](REPORT.md) summarizes the completed runs, stop decision, and limitations.
+
 ## Study design
 
 Each task starts from a DSU forest reachable under full path compression and union-by-size. A `find` compresses its entire traversed path. A `union` runs both finds first; on an equal-size tie, the second argument's root attaches under the first argument's root. Every presentation of a task uses the same operations and output requirements.
