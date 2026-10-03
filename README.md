@@ -2,7 +2,7 @@
 
 VisDSR is a study of sequential reasoning over disjoint-set union (DSU) forests. It asks whether a model's accuracy changes when the same initial state is given as a parent map, an image of that parent map, or a forest diagram. It also tests whether asking the model to transcribe the initial state before applying operations changes its accuracy. DSU keeps each intermediate state checkable while still requiring path compression and union decisions across steps.
 
-**Status:** The C++ DSU simulator passed a worked example and 5,000 seeded comparisons with a separate Python reference. Qwen3-VL-8B-Instruct completed both calibration pilots. On the shorter second pilot, T-dir scored 1/12 and R-dir and G-dir scored 0/12, so the Qwen main run is stopped. The protocol remains unfrozen. An InternVL3.5 three-call smoke test is prepared; no main run has occurred. Model responses and generated data remain outside Git.
+**Status:** The C++ DSU simulator passed a worked example and 5,000 seeded comparisons with a separate Python reference. Qwen3-VL-8B-Instruct completed two calibration pilots; its shorter second pilot scored T-dir 1/12, R-dir 0/12, and G-dir 0/12. An InternVL3.5 smoke test on one task returned strict-correct JSON for T-dir but invalid output for both image conditions. The protocol remains unfrozen, and no full InternVL pilot or main run has occurred. Model responses and generated data remain outside Git.
 
 ## Study design
 
@@ -63,10 +63,10 @@ The runner hashes the model ID, revision, settings, task ID, condition, exact pr
 
 ## InternVL3.5 feasibility check
 
-The separate [`InternVL notebook`](notebooks/internvl35_visdsr.ipynb) uses the official fully trained [OpenGVLab/InternVL3_5-8B-HF](https://huggingface.co/OpenGVLab/InternVL3_5-8B-HF) checkpoint at a pinned revision. It uses the same existing pilot2 task and prompt bytes and makes only T-dir, R-dir, and G-dir calls for one task. The Kaggle GPU result has not yet been observed.
+The separate [`InternVL notebook`](notebooks/internvl35_visdsr.ipynb) ran three calls on the same existing pilot2 task with the pinned [OpenGVLab/InternVL3_5-8B-HF](https://huggingface.co/OpenGVLab/InternVL3_5-8B-HF) checkpoint. T-dir returned valid, correct JSON (1/1). R-dir returned a correct JSON answer only after a `<think>` preamble, so its **official strict score is 0/1**. G-dir also began with `<think>` and ended mid-reasoning without an answer, for an official score of 0/1. Removing the R-dir preamble is a diagnostic observation, not a change to the scorer or reported result. One task is insufficient to estimate accuracy by condition.
 
-1. Import the InternVL notebook into Kaggle, enable GPU and Internet, and attach only the private `visdsr_results.zip` as Input. Kaggle may unpack the archive; the notebook accepts either form. The upload archive keeps individual cache records and omits the redundant nested `results/cache_snapshot.zip`, which can conflict with Kaggle extraction.
-2. Run All. Review the three strict parse results, model revision, GPU memory, and latency before considering more calls.
-3. Download `visdsr_internvl35_smoke.zip` from `/kaggle/working` Output. The notebook uses a distinct filename so an earlier archive is easy to distinguish.
+The model loaded on a Tesla T4 with 4-bit NF4 weights; peak allocated GPU memory was 6.84 GiB, with no out-of-memory error. The three calls took 7.16, 353.88, and 419.40 seconds respectively. The reviewed private export has SHA-256 `25ca9faf910ad1b6cd537dc2ead0993509cc4cf996c111c0fa963e5a76ecb71b`; its three raw responses, cache records, prompt and image hashes, and strict scores agree. The earlier Qwen task data and 120 cache records were preserved. This archive remains outside Git.
 
-No `FREEZE.json` has been written, and main task generation remains stopped. A full InternVL pilot or any main run needs a documented decision after its smoke test. `python -m eval.run --split pilot2 --model mock` checks plumbing only and is not a study result. Generated tasks, images, responses, and figures remain excluded from Git until reviewed for release. Exact-match scoring cannot by itself identify a model's internal failure mechanism.
+The full InternVL pilot and all main runs remain stopped. The attached Kaggle notebook used an older export cell that included a redundant nested `cache_snapshot.zip`; the current repository notebook omits it. Keep the downloaded original as a backup and use a copy without the nested ZIP if a future Kaggle upload is approved.
+
+No `FREEZE.json` has been written, and main task generation remains stopped. Any further model run needs a documented decision after this smoke test. `python -m eval.run --split pilot2 --model mock` checks plumbing only and is not a study result. Generated tasks, images, responses, and figures remain excluded from Git until reviewed for release. Exact-match scoring cannot by itself identify a model's internal failure mechanism.

@@ -1,6 +1,6 @@
 # DSU experiment protocol
 
-**Status:** Qwen calibration stopped after the planned two pilots. The shorter second pilot scored T-dir 1/12, R-dir 0/12, and G-dir 0/12 on final-state exact match. The text baseline remains at floor, so no freeze or main run has occurred. A separate three-call InternVL3.5 feasibility check is prepared on an existing pilot2 task.
+**Status:** Qwen calibration stopped after the planned two pilots. The shorter second pilot scored T-dir 1/12, R-dir 0/12, and G-dir 0/12 on final-state exact match. The separate three-call InternVL3.5 smoke test on one existing task scored T-dir 1/1, R-dir 0/1, and G-dir 0/1 under the unchanged strict scorer; both image responses had format errors. The protocol remains unfrozen, and no full InternVL pilot or main run has occurred.
 
 ## Task rules
 
