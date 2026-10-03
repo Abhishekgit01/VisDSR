@@ -82,8 +82,9 @@ class ProviderTests(unittest.TestCase):
                 archive = root / "results/cache_snapshot.zip"
                 with zipfile.ZipFile(archive) as stream:
                     self.assertEqual(len(stream.namelist()), 3)
-                with contextlib.redirect_stdout(io.StringIO()):
-                    runner.run("pilot", "model1", False, None, False, True, False)
+                with patch.object(local, "LocalModel", side_effect=AssertionError("cached run loaded a model")):
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        runner.run("pilot", "model1", False, None, False, True, False)
                 self.assertEqual(len(FakeModel.calls), 3)
                 records = [json.loads(path.read_text()) for path in
                            (root / "results/cache").glob("*.json")]
@@ -111,6 +112,21 @@ class ProviderTests(unittest.TestCase):
                 self.assertEqual(len(FakeModel.calls), 9)
                 self.assertTrue((root / "results/scores_pilot2_smoke_model2.csv").exists())
                 self.assertEqual(len(list((root / "results/cache").glob("*.json"))), 9)
+                with patch.object(runner, "read_tasks", return_value=[second]):
+                    for expected_calls, expected_rows in ((10, 4), (11, 5)):
+                        with contextlib.redirect_stdout(io.StringIO()):
+                            runner.run("pilot2", "model1", False, None, False, False, True,
+                                       max_new_calls=1)
+                        self.assertEqual(len(FakeModel.calls), expected_calls)
+                        with (root / "results/scores_pilot2_model1.csv").open(newline="") as source:
+                            self.assertEqual(len(list(csv.DictReader(source))), expected_rows)
+                    with patch.object(local, "LocalModel", side_effect=AssertionError("scoring loaded a model")):
+                        with contextlib.redirect_stdout(io.StringIO()):
+                            runner.run("pilot2", "model1", False, None, True, False, False)
+                    output = io.StringIO()
+                    with contextlib.redirect_stdout(output):
+                        runner.run("pilot2", "model1", True, None, False, False, False)
+                    self.assertIn("5 cache entries already present", output.getvalue())
 
     def test_full_run_requires_smoke_review(self):
         with patch.object(runner, "read_tasks", return_value=[{"id": "pilot_test"}]), \

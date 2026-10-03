@@ -8,7 +8,7 @@ import json
 import platform
 import subprocess
 
-from visdsr import ROOT, config, digest
+from visdsr import ROOT, config, digest, protocol_hashes
 
 
 def command_version(arguments: list[str]) -> str | None:
@@ -52,6 +52,9 @@ def build() -> dict:
     return {
         "generated_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "git_commit": git_commit(),
+        "protocol_id": config().get("protocol_id", "visdsr-dsu-v1"),
+        "prompt_sha256": digest((ROOT / "eval/prompts.py").read_bytes()),
+        "source_hashes": protocol_hashes() if config().get("protocol_version") == 2 else None,
         "config_sha256": digest((ROOT / "configs/experiment.yaml").read_bytes()),
         "model_ids": [model["id"] for model in config()["models"]],
         "run_dates_utc": {"first": min(dates) if dates else None,

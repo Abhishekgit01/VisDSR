@@ -93,7 +93,10 @@ def analyze(models: list[str], split: str, allow_partial: bool) -> None:
         comparisons[index]["holm_p"] = adjusted
     result = ROOT / "results"
     result.mkdir(exist_ok=True)
-    suffix = "_pilot2" if split == "pilot2" else ""
+    if config().get("protocol_version") == 2:
+        suffix = f"_{split}_{'_'.join(sorted(models))}"
+    else:
+        suffix = "_pilot2" if split == "pilot2" else ""
     summary_path = result / f"summary{suffix}.csv"
     comparisons_path = result / f"comparisons{suffix}.csv"
     write_csv(summary_path, summary)

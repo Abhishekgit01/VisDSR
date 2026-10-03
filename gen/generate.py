@@ -6,7 +6,7 @@ import json
 import random
 import subprocess
 
-from visdsr import ROOT, SPLITS, canonical, config, digest
+from visdsr import ROOT, SPLITS, canonical, config, digest, verify_freeze
 
 
 def root(state: dict[str, str], label: str) -> tuple[str, int]:
@@ -135,6 +135,8 @@ def build(split: str, dry_run: bool = False, limit: int | None = None) -> list[d
         print(json.dumps({"split": split, "seed": cfg[f"{split}_seed"], "plan": plan}, indent=2))
         return []
     if split == "main":
+        if cfg.get("protocol_version") == 2:
+            verify_freeze()
         freeze = ROOT / "FREEZE.json"
         if not freeze.exists():
             raise RuntimeError("freeze the calibrated pilot with python -m gen.freeze before main generation")
@@ -167,8 +169,8 @@ def build(split: str, dry_run: bool = False, limit: int | None = None) -> list[d
                         "prelude": prelude, "initial": truth["initial"],
                         "operations": operations, "steps": truth["steps"]}
                 task["difficulty"] = metadata(task["initial"], operations, task["steps"])
-                # Each two-operation pilot2 size cell includes an equal-size tie.
-                needs_tie = split == "pilot2" and count == 2 and index == 0
+                # Each multi-operation calibration size cell includes a tie.
+                needs_tie = split == "pilot2" and count > 1 and index == 0
                 tie_ok = not needs_tie or task["difficulty"]["equal_size_ties"] > 0
                 if signature not in signatures and valid_task(task, count) and tie_ok:
                     signatures.add(signature)

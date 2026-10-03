@@ -97,10 +97,10 @@ def validate(split: str) -> dict[str, int]:
         if sum(task["operations"][0]["kind"] == "find" for task in one_op) != 3:
             raise ValueError("pilot2 one-operation finds and unions are not balanced")
         for size in ("small", "large"):
-            two_op = [task for task in tasks
-                      if task["size"] == size and len(task["operations"]) == 2]
-            if not any(task["difficulty"]["equal_size_ties"] for task in two_op):
-                raise ValueError(f"pilot2 {size} two-operation tasks lack an equal-size tie")
+            multi_op = [task for task in tasks
+                        if task["size"] == size and len(task["operations"]) > 1]
+            if not any(task["difficulty"]["equal_size_ties"] for task in multi_op):
+                raise ValueError(f"pilot2 {size} multi-operation tasks lack an equal-size tie")
     for other in SPLITS:
         other_file = ROOT / "data" / other / "tasks.jsonl"
         if other != split and other_file.exists():

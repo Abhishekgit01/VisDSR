@@ -1,9 +1,11 @@
 project: visdsr
-pilot_seed: 2026092601
-pilot2_seed: 2026100301
-main_seed: 2026092702
-run_order_seed: 2026092801
-pilot2_run_order_seed: 2026100302
+protocol_version: 2
+protocol_id: visdsr-dsu-v2
+pilot_seed: 2026100401
+pilot2_seed: 2026100402
+main_seed: 2026100403
+run_order_seed: 2026100404
+pilot2_run_order_seed: 2026100405
 dsu:
   enabled: true
   small_size: 8
@@ -11,7 +13,7 @@ dsu:
   main_tasks_per_cell: 20
   pilot_tasks_per_cell: 6
   pilot2_tasks_per_cell: 3
-  pilot2_sequence_lengths: [1, 2]
+  pilot2_sequence_lengths: [1, 4]
   sequence_lengths: [1, 4]
 render:
   canvas: 1024

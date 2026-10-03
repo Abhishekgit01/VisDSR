@@ -96,7 +96,20 @@ class LocalModel:
         latency = time.monotonic() - started
         gpu_peaks = [self.torch.cuda.max_memory_allocated(index)
                      for index in range(self.torch.cuda.device_count())]
+        input_tokens = int(inputs["input_ids"].shape[-1])
+        output_tokens = int(output_ids.shape[-1])
         return {
+            "effective_generation_parameters": {
+                "do_sample": False, "num_beams": 1,
+                "max_new_tokens": settings["max_output_tokens"],
+            },
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+            "hit_output_cap": output_tokens >= settings["max_output_tokens"],
+            "input_tensor_shapes": {name: list(value.shape) for name, value in inputs.items()
+                                    if hasattr(value, "shape")},
+            "device_map": {name: str(device) for name, device in
+                           getattr(self.model, "hf_device_map", {}).items()},
             "raw_text": self.processor.decode(output_ids, skip_special_tokens=True,
                                               clean_up_tokenization_spaces=False),
             "latency": latency,

@@ -1,0 +1,6 @@
+# Versions recorded in the successful InternVL Kaggle smoke export.
+# Keep Kaggle's installed CUDA-enabled PyTorch build.
+transformers==4.57.1
+accelerate==1.14.0
+bitsandbytes==0.50.2
+huggingface_hub==0.36.2
