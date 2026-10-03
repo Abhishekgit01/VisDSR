@@ -22,3 +22,4 @@ data/pilot2/img/*.png
 data/pilot2/contact_sheet.png
 data/main/contact_sheet.png
 visdsr_v2_*.zip
+results/diagnostics/
