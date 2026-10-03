@@ -1,38 +1,46 @@
 # VisDSR
 
-VisDSR is a study of sequential reasoning over disjoint-set union (DSU) forests. It asks whether a model's accuracy changes when the same initial state is given as a parent map, an image of that parent map, or a forest diagram. It also tests whether asking the model to transcribe the initial state before applying operations changes its accuracy. DSU keeps each intermediate state checkable while still requiring path compression and union decisions across steps.
+VisDSR studies sequential reasoning over disjoint-set union (DSU) forests. It asks how model accuracy changes when the same starting state is supplied as a parent map, an image of that map, or a forest diagram. Two additional conditions ask the model to transcribe the initial state before applying operations.
 
-**Status:** The C++ DSU simulator passed a worked example and 5,000 seeded comparisons with a separate Python reference. Qwen3-VL-8B-Instruct completed two calibration pilots; its shorter second pilot scored T-dir 1/12, R-dir 0/12, and G-dir 0/12. An InternVL3.5 smoke test on one task returned strict-correct JSON for T-dir but invalid output for both image conditions. The protocol remains unfrozen, and no full InternVL pilot or main run has occurred. Model responses and generated data remain outside Git.
+DSU makes every intermediate state checkable while requiring path compression, set-size comparisons, and a fixed union tie rule. A C++ simulator supplies ground truth, and an independent Python reference checks it.
 
-The [pilot and feasibility report](REPORT.md) summarizes the completed runs, stop decision, and limitations.
+**Status:** This branch prepares an unfrozen v2 study. Its calibration covers the same difficulty cells as the planned main run: 8 or 16 elements, with one or four operations. No v2 model responses or main results exist yet. Earlier Qwen pilots and an InternVL smoke test are preserved as feasibility results in [`REPORT.md`](REPORT.md). The revised design and execution decisions are in [`STUDY_V2.md`](STUDY_V2.md).
 
 ## Study design
-
-Each task starts from a DSU forest reachable under full path compression and union-by-size. A `find` compresses its entire traversed path. A `union` runs both finds first; on an equal-size tie, the second argument's root attaches under the first argument's root. Every presentation of a task uses the same operations and output requirements.
 
 | Condition | Initial state | Additional output |
 | --- | --- | --- |
 | T-dir | Canonical JSON parent map | None |
 | R-dir | PNG of the same JSON string | None |
-| G-dir | Forest diagram, with child-to-parent arrows | None |
-| T-str | Canonical JSON parent map | Initial-state transcription |
-| G-str | Forest diagram | Initial-state transcription |
+| G-dir | Forest diagram with child-to-parent arrows | None |
+| T-str | Canonical JSON parent map | Initial-map transcription |
+| G-str | The same diagram as G-dir | Initial-map transcription |
 
-The first pilot used 12 four-operation tasks. The second calibration round used 12 new tasks: three for each combination of 8 or 16 elements and 1 or 2 operations. The original main design specifies 80 tasks: 20 for each combination of 8 or 16 elements and 1 or 4 operations. That plan is inactive after Qwen calibration. Each main task appears in all five conditions. The primary comparison is paired final-state exact-match accuracy for **G-dir versus T-dir**. The analysis code also computes a paired bootstrap confidence interval and an exact McNemar test; the other contrasts and error measures are described in [`SPEC.md`](SPEC.md). These are analysis plans, not findings.
+All conditions use identical operations and require the parent map after each operation, plus every `find` result. Transcription is a JSON object. Invalid output counts as incorrect; responses are preserved without repairs or content retries.
 
-| Path | Purpose |
-| --- | --- |
-| [`sim/dsu.cpp`](sim/dsu.cpp) | C++ simulator interface and operation protocol |
-| [`gen/`](gen/) | Seeded tasks, image rendering, and validation |
-| [`eval/`](eval/) | Prompts, local inference, validation, and scoring |
-| [`analysis/`](analysis/) | Paired statistics and figure generation |
-| [`tests/`](tests/) | Worked cases and independent simulator checks |
-| [`notebooks/visdsr_qwen3vl8b_kaggle.ipynb`](notebooks/visdsr_qwen3vl8b_kaggle.ipynb) | Kaggle GPU setup and guarded Qwen run |
-| [`notebooks/internvl35_visdsr.ipynb`](notebooks/internvl35_visdsr.ipynb) | Kaggle three-call InternVL3.5 feasibility check |
+The planned main study has 80 fresh tasks, five conditions, and two open-weight families: [Qwen3-VL-8B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct) and [InternVL3.5-8B-HF](https://huggingface.co/OpenGVLab/InternVL3_5-8B-HF). That is 800 independent responses. Models use pinned revisions, local 4-bit NF4 weights, and greedy decoding. No paid inference API is used.
 
-## Run locally
+The primary measure is final-parent-map exact match. The primary comparison is **T-dir minus G-dir**, paired by task. Secondary measures include full-sequence correctness, transcription accuracy, and format errors. Main execution requires reviewed calibration and an audited protocol freeze; preparation does not establish a modality effect.
 
-Requires Python 3.11+, a C++17 compiler, and Graphviz `dot` on `PATH`.
+## Run on Kaggle
+
+Start with a new notebook and the revised Qwen file:
+
+- [`qwen3_vl_v2_kaggle.ipynb`](notebooks/qwen3_vl_v2_kaggle.ipynb)
+- [`internvl35_v2_kaggle.ipynb`](notebooks/internvl35_v2_kaggle.ipynb)
+
+1. Download the Qwen notebook from the `study-v2` branch and import it into Kaggle. Enable a free GPU and Internet.
+2. Keep `STAGE = "smoke"` and the review flags false. Run the cells from top to bottom. The default makes only three calls: T-dir, R-dir, and G-dir on the same four-operation calibration task.
+3. Download `visdsr_v2_results.zip` from the Output panel. Review the raw answers, strict parsing, correctness, tokens, memory, and latency before selecting calibration.
+4. After review, calibration runs at most 20 new responses per execution and reuses the smoke cache. Download each updated export. Attach the newest export as a private Dataset when resuming or starting InternVL.
+
+The v2 project folder is `/kaggle/working/VisDSR_v2`. Its backup checks source fingerprints, calibration task bytes, and payload checksums. Earlier v1 exports are incompatible. Both a ZIP and Kaggle's extracted Dataset layout are supported. Exports omit the redundant nested cache ZIP that caused earlier upload problems.
+
+Every completed response is cached immediately; each bounded run also exports automatically. A lost runtime can still lose files that have not been exported and saved outside the session. Do not rely on Kaggle's temporary disk as the only copy.
+
+## Check locally
+
+Requires Python 3.11+, a C++17 compiler, Graphviz, and DejaVu fonts.
 
 ```bash
 python -m pip install -r environment/requirements.txt
@@ -42,33 +50,44 @@ make lint
 make stress
 ```
 
-`make test` checks the Python infrastructure. `make stress` compares the C++ simulator against a separate test oracle on the worked example and 5,000 seeded random cases. The current simulator passes both. To regenerate the pilot:
+Generate the revised calibration in a separate checkout so historical local data stays intact:
 
 ```bash
-python -m gen.generate --split pilot --structure dsu
-python -m gen.render --split pilot
-python -m gen.validate --split pilot
-python -m gen.render --split pilot --qa
+python -m gen.generate --split pilot2
+python -m gen.render --split pilot2
+python -m gen.validate --split pilot2
+python -m gen.render --split pilot2 --qa
+python -m eval.run --split pilot2 --model mock --max-new-calls 20
 ```
 
-Validation replays each task through the C++ simulator and checks image dimensions, geometry, pixels, filenames, and manifest hashes. The last command exports a contact sheet for visual inspection. See [`tests/examples.json`](tests/examples.json) for a worked DSU case and [`STUDENT_UNDERSTANDING.md`](STUDENT_UNDERSTANDING.md) for the implementation explanation and AI-assistance record.
+The mock oracle checks caching and scoring without model inference; it supplies no study evidence. `make stress` checks the worked example and 5,000 seeded simulator cases. Image validation checks replayed truth, dimensions, geometry, pixels, filenames, and hashes. Main generation is blocked until the reviewed freeze exists.
 
-## Calibration result
+| Path | Purpose |
+| --- | --- |
+| [`sim/dsu.cpp`](sim/dsu.cpp) | DSU simulator and operation protocol |
+| [`gen/`](gen/) | Seeded tasks, rendering, validation, and freeze audit |
+| [`eval/`](eval/) | Shared prompts, local inference, caching, and strict scoring |
+| [`analysis/`](analysis/) | Paired statistics and figures |
+| [`study_transfer.py`](study_transfer.py) | Checked v2 backup export and restore |
+| [`tests/`](tests/) | Independent DSU reference and infrastructure checks |
+| [`STUDENT_UNDERSTANDING.md`](STUDENT_UNDERSTANDING.md) | Algorithm explanation and AI-assistance provenance |
 
-The first, four-operation Qwen pilot scored 0/12 in each direct condition. The second pilot used 12 new one- and two-operation tasks without changing the prompts, renderer, DSU rules, model settings, or scorer. It scored T-dir 1/6 on one-operation tasks and 0/6 on two-operation tasks; R-dir and G-dir scored 0/12 each. The near-zero text baseline does not support the planned modality comparison, so the Qwen main run is stopped. G-str returned string transcriptions in all 12 second-pilot calls; the prompt did not explicitly require a JSON object for that field, which limits interpretation of its format errors.
+## Historical feasibility results
 
-The reviewed private archives have SHA-256 `a7a3eaa8b3d51f1d18ff57bc7bbba97735cdb077da5936bd751ec86e33974fa8` (first pilot) and `f40e0ce44178ef39fb1a87e7ff155d975c31ff270b0ca9ace74ab4390829726b` (both pilots). The latter contains 60 unique second-pilot responses. Raw responses, request hashes, image hashes, cached records, and strict scores were checked against one another; the 24 pilot task answers matched a separate Python DSU oracle. Both archives stay private. These are calibration observations, not main-study findings.
+The v1 code is preserved at commit `bf81065`. Its [`SPEC.md`](SPEC.md) and [`REPORT.md`](REPORT.md) describe a separate protocol, with unchanged official scores:
 
-Qwen uses [Qwen/Qwen3-VL-8B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct), pinned in [`configs/experiment.yaml`](configs/experiment.yaml), with bitsandbytes 4-bit NF4 weights, greedy decoding, and a 2,048-token output cap. The checkpoint revision and generation settings are recorded with each response. No paid inference API is used.
+| Run | T-dir | R-dir | G-dir |
+| --- | ---: | ---: | ---: |
+| Qwen pilot 1, 12 four-operation tasks | 0/12 | 0/12 | 0/12 |
+| Qwen pilot 2, 12 one/two-operation tasks | 1/12 | 0/12 | 0/12 |
+| InternVL smoke, one task | 1/1 | 0/1 | 0/1 |
 
-The runner hashes the model ID, revision, settings, task ID, condition, exact prompt, and image bytes. It writes every raw response before the next request and refreshes `results/cache_snapshot.zip` after each call. The notebooks restore only `data/` and `results/` from an attached export, so an older archive cannot replace the current code or configuration. Keep the latest export outside Kaggle's temporary session storage.
+The Qwen text baseline was near zero. InternVL's image outputs began with reasoning text; the diagram response did not finish an answer. These runs did not establish whether diagrams help or hurt DSU reasoning. They motivated clearer output instructions and a representative calibration set for v2. Historical responses will not be pooled with v2.
 
-## InternVL3.5 feasibility check
+Reviewed private archive SHA-256 checksums:
 
-The separate [`InternVL notebook`](notebooks/internvl35_visdsr.ipynb) ran three calls on the same existing pilot2 task with the pinned [OpenGVLab/InternVL3_5-8B-HF](https://huggingface.co/OpenGVLab/InternVL3_5-8B-HF) checkpoint. T-dir returned valid, correct JSON (1/1). R-dir returned a correct JSON answer only after a `<think>` preamble, so its **official strict score is 0/1**. G-dir also began with `<think>` and ended mid-reasoning without an answer, for an official score of 0/1. Removing the R-dir preamble is a diagnostic observation, not a change to the scorer or reported result. One task is insufficient to estimate accuracy by condition.
+- First Qwen pilot: `a7a3eaa8b3d51f1d18ff57bc7bbba97735cdb077da5936bd751ec86e33974fa8`.
+- Both Qwen pilots: `f40e0ce44178ef39fb1a87e7ff155d975c31ff270b0ca9ace74ab4390829726b`.
+- InternVL smoke plus preserved Qwen data: `25ca9faf910ad1b6cd537dc2ead0993509cc4cf996c111c0fa963e5a76ecb71b`.
 
-The model loaded on a Tesla T4 with 4-bit NF4 weights; peak allocated GPU memory was 6.84 GiB, with no out-of-memory error. The three calls took 7.16, 353.88, and 419.40 seconds respectively. The reviewed private export has SHA-256 `25ca9faf910ad1b6cd537dc2ead0993509cc4cf996c111c0fa963e5a76ecb71b`; its three raw responses, cache records, prompt and image hashes, and strict scores agree. The earlier Qwen task data and 120 cache records were preserved. This archive remains outside Git.
-
-The full InternVL pilot and all main runs remain stopped. The attached Kaggle notebook used an older export cell that included a redundant nested `cache_snapshot.zip`; the current repository notebook omits it. Keep the downloaded original as a backup and use a copy without the nested ZIP if a future Kaggle upload is approved.
-
-No `FREEZE.json` has been written, and main task generation remains stopped. Any further model run needs a documented decision after this smoke test. `python -m eval.run --split pilot2 --model mock` checks plumbing only and is not a study result. Generated tasks, images, responses, and figures remain excluded from Git until reviewed for release. Exact-match scoring cannot by itself identify a model's internal failure mechanism.
+The raw responses and generated data remain outside Git. The public repository alone cannot reproduce those historical numerical results. A final v2 release must include a reviewed reproduction artifact or access instructions, along with the frozen code, audited scores, figures, and report. The project uses clean synthetic images and exact-match scoring; these outputs do not identify a model's internal failure mechanism.

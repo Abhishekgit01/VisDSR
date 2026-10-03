@@ -1,6 +1,14 @@
 # Changelog
 
-## Unreleased
+## Unreleased: v2 preparation
+
+- Prepared a separate v2 protocol with shared worked examples and explicit JSON field types.
+- Matched calibration to the 8/16-element and 1/4-operation main design.
+- Added bounded inference, token and device logging, checked archive restore, and a freeze audit against raw caches.
+- Added Qwen and InternVL Kaggle notebooks that default to three smoke calls and export after each inference chunk.
+- No v2 model inference or main study has occurred.
+
+## V1 calibration and feasibility
 
 - Completed the first Qwen pilot on 12 four-operation tasks. T-dir, R-dir, and G-dir each scored 0/12 on final-state exact match; the protocol remains unfrozen.
 - Completed the second Qwen pilot with the same rules, images, prompts, model settings, and strict scorer. T-dir scored 1/12; R-dir and G-dir scored 0/12. The Qwen main run remains stopped, with no protocol freeze.
