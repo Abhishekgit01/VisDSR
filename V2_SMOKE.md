@@ -342,3 +342,36 @@ Recorded mean Qwen latency across the 23 responses is 98.05 seconds, including i
 Rerun the same recovery cell with `--model model1 --calibration` once, without changing its model argument or other settings. It reuses all existing responses and collects at most twenty new Qwen calls, reaching **43/60** after a complete chunk. The following chunk makes seventeen calls and reaches **60/60**. InternVL's sixty responses stay in the combined export.
 
 Download `visdsr_v2_results.zip` directly from Output when `BACKUP READY` appears, then submit it for review. A separate export cell is unnecessary. If the runtime has lost its working files, attach the newest combined backup, currently `visdsr_v2_results (5).zip`, as the only VisDSR results Dataset before recovery. Main remains disabled pending complete calibration review and the documented freeze decision.
+
+## Qwen calibration progress: second chunk, 4 October 2026
+
+Twenty new responses bring Qwen to **43/60**. InternVL remains complete at **60/60**, with its results unchanged. Seventeen Qwen calibration requests remain.
+
+| Condition | Responses reviewed | Final exact matches | Full sequences correct | Format failures | Output-cap hits | Mean latency |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| T-dir | 12 | 2 | 2 | 0 | 0 | 35.29 s |
+| R-dir | 7 | 0 | 0 | 0 | 0 | 102.20 s |
+| G-dir | 8 | 0 | 0 | 4 | 3 | 204.00 s |
+| T-str | 7 | 0 | 0 | 3 | 1 | 71.62 s |
+| G-str | 9 | 0 | 0 | 4 | 3 | 198.12 s |
+| Total | 43 | 2 | 2 | 11 | 7 | 117.57 s |
+
+The additional correct response is `pilot2_0002/T-dir`, an eight-element task with one `find(F)` operation. It follows `F → B → C`, returns `C`, and compresses `F`'s parent to `C`. The earlier correct `pilot2_0006/T-dir` response is unchanged. All twelve T-dir responses are now present, with two correct final maps and full sequences. Other conditions remain incomplete, so a final calibration comparison is pending.
+
+All four schema-valid T-str responses transcribed the initial map correctly; all five valid G-str transcriptions were wrong. Of the eleven format failures, ten are invalid JSON and one has invalid first-step fields. Seven responses reached the 2,048-token cap. Official scores use the existing strict scorer without repairs, retries, or changes to the prompts or inference settings.
+
+### Second Qwen chunk archive audit
+
+The reviewed private `visdsr_v2_results (6).zip` has SHA-256 `59cc6668b2a0af1e78fc8a142fc32ff73025778a91cff4a83e88be3a1e8f8da9` and size 566,768 bytes. It contains 147 payload files and the export marker. The manifest records commit `e21d840ea8d55b312d3dfdfc2b443cde72c6bec8`.
+
+Compared with the preceding archive, twenty cache files were added and the Qwen calibration raw JSONL and CSV expanded from 23 to 43 records. All 23 earlier aggregate records are preserved unchanged, and all 125 other preceding payload files are byte-identical, including the complete InternVL results, both smoke exports, tasks, images, and diagnostics.
+
+All payload checksums and all 21 protected source hashes passed. Each of the 103 official caches matches its prescribed model revision, generation settings, exact prompts, task hash, image hash, and request key. The twenty added Qwen calls follow the fixed request order. Recomputed strict scores and raw records agree with both calibration exports and both smoke exports. All twelve task answers match the independent Python DSU reference, and all 24 source images match their recorded hashes. No model was loaded or called, and no images were regenerated during the audit.
+
+Recorded mean Qwen latency across the 43 responses is 117.57 seconds, including the earlier smoke calls. Total recorded inference time is 5,055.38 seconds, or 84.26 minutes, excluding setup and loading. The largest per-device allocated peak remains 5.24 GiB. These measurements describe partial calibration.
+
+### Finish Qwen calibration
+
+Rerun the same standalone recovery cell with `--model model1 --calibration` once. It reuses all 43 existing Qwen responses and makes the remaining seventeen requests, reaching **60/60**. InternVL's sixty responses remain in the combined export.
+
+When `BACKUP READY` appears, download `visdsr_v2_results.zip` directly from Output and submit the complete archive for review. Recovery exports automatically, so no separate export cell is needed. If the runtime has lost its working files, attach the newest reviewed combined backup, `visdsr_v2_results (6).zip`, as the only VisDSR results Dataset before recovery. Main remains disabled pending review of both complete calibrations and the documented freeze decision.

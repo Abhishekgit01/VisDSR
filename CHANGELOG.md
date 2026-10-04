@@ -2,6 +2,7 @@
 
 ## Unreleased: v2 preparation
 
+- Audited the second Qwen v2 calibration chunk: 43/60 responses, two correct final maps, and eleven format failures. All earlier responses and all sixty InternVL results are preserved; seventeen Qwen requests remain.
 - Added a worked DSU example to the README with the exact calibration diagram, complete task, and independently checked expected states.
 - Published the current study on `main`, updated the Kaggle notebook defaults, and clarified calibration progress in the README and implementation notes.
 - Audited the first Qwen v2 calibration chunk: 23/60 responses, one correct final map, and three format failures. All sixty InternVL responses and earlier study files are unchanged; 37 Qwen requests remain.

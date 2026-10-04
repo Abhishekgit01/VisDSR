@@ -12,7 +12,7 @@ Calibration is in progress. The latest reviewed backup contains:
 
 | Model | Calibration responses | Correct final maps | Format failures |
 | --- | ---: | ---: | ---: |
-| Qwen3-VL-8B-Instruct | 23/60 | 1/23 | 3/23 |
+| Qwen3-VL-8B-Instruct | 43/60 | 2/43 | 11/43 |
 | InternVL3.5-8B-HF | 60/60 | 1/60 | 38/60 |
 
 The Qwen results are incomplete. InternVL's text and diagram conditions each scored 0/12, so those results do not establish a modality effect. The main experiment has not started; it requires complete calibration review and a frozen protocol.
