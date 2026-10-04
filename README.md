@@ -4,7 +4,7 @@ VisDSR studies sequential reasoning over disjoint-set union (DSU) forests. It as
 
 DSU makes every intermediate state checkable while requiring path compression, set-size comparisons, and a fixed union tie rule. A C++ simulator supplies ground truth, and an independent Python reference checks it.
 
-**Status:** InternVL has completed v2 calibration: 60/60 responses, one correct final map, and 38 output-format failures. T-dir and G-dir each scored 0/12; these floor results do not establish a modality effect. Qwen has completed three of its sixty calibration requests. Its remaining responses will use the same fixed tasks and settings, in chunks of at most 20 new calls. Main remains disabled until both models' calibration is reviewed and the protocol is frozen.
+**Status:** InternVL has completed v2 calibration: 60/60 responses, one correct final map, and 38 output-format failures. T-dir and G-dir each scored 0/12; these floor results do not establish a modality effect. Qwen has completed 23/60 calibration requests, with one correct final map and three output-format failures. These Qwen results are incomplete; its remaining responses will use the same fixed tasks and settings, in chunks of at most 20 new calls. Main remains disabled until both models' calibration is reviewed and the protocol is frozen.
 
 Calibration covers the same difficulty cells as the planned main run: 8 or 16 elements, with one or four operations. Earlier Qwen pilots and an InternVL smoke test are preserved as feasibility results in [`REPORT.md`](REPORT.md). The pre-run design is in [`STUDY_V2.md`](STUDY_V2.md); audits and the next execution steps are in [`V2_SMOKE.md`](V2_SMOKE.md).
 
