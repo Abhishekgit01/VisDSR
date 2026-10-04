@@ -8,14 +8,14 @@ DSU makes every intermediate state checkable while requiring path compression, s
 
 ## Current results
 
-Calibration is in progress. The latest reviewed backup contains:
+Calibration is complete. The latest reviewed backup contains:
 
 | Model | Calibration responses | Correct final maps | Format failures |
 | --- | ---: | ---: | ---: |
-| Qwen3-VL-8B-Instruct | 43/60 | 2/43 | 11/43 |
+| Qwen3-VL-8B-Instruct | 60/60 | 2/60 | 18/60 |
 | InternVL3.5-8B-HF | 60/60 | 1/60 | 38/60 |
 
-The Qwen results are incomplete. InternVL's text and diagram conditions each scored 0/12, so those results do not establish a modality effect. The main experiment has not started; it requires complete calibration review and a frozen protocol.
+Qwen's text and diagram conditions scored 2/12 and 0/12; InternVL scored 0/12 in both. Low baseline accuracy and frequent format failures limit interpretation of a modality comparison. The [main-study decision](MAIN_DECISION.md) records these limits and the rationale for collecting fresh tasks. The protocol is frozen; no main model responses have been collected.
 
 Calibration covers 8 or 16 elements and one or four operations. The [study design](STUDY_V2.md) is the preserved plan written before these calls. The [calibration results and run log](V2_SMOKE.md) records subsequent observations and resume instructions. Earlier runs are documented in the [pilot and feasibility report](REPORT.md).
 
@@ -63,7 +63,23 @@ The [exact diagram input](docs/examples/dsu-forest.png) and [complete task with 
 
 The planned main study has 80 fresh tasks, five conditions, and two open-weight families: [Qwen3-VL-8B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct) and [InternVL3.5-8B-HF](https://huggingface.co/OpenGVLab/InternVL3_5-8B-HF). That is 800 independent responses. Models use pinned revisions, local 4-bit NF4 weights, and greedy decoding. No paid inference API is used.
 
-The primary measure is final-parent-map exact match. The primary comparison is **T-dir minus G-dir**, paired by task. Secondary measures include full-sequence correctness, transcription accuracy, and format errors. Main execution requires reviewed calibration and an audited protocol freeze; preparation does not establish a modality effect.
+The primary measure is final-parent-map exact match. The primary comparison is **T-dir minus G-dir**, paired by task. Secondary measures include full-sequence correctness, transcription accuracy, and format errors. The [freeze record](FREEZE.json) contains the audited calibration summaries and protected source hashes. Preparation does not establish a modality effect.
+
+### Reproduce the calibration scores
+
+The [protocol-freeze release](https://github.com/Abhishekgit01/VisDSR/releases/tag/v2.0-frozen) includes `visdsr-calibration.zip`: the twelve tasks, 24 original images, 120 official raw caches, smoke outputs, and separate diagnostics. Its SHA-256 is `40569d0fb6fb3eea7c626474587a1488f8bf5f6ffb296c543fd3e4cdfde486ee`. It is the audited backup with a descriptive download filename; its bytes are unchanged.
+
+Use a fresh checkout of the `v2.0-frozen` tag so existing local data is preserved. Download the ZIP into that checkout, then run:
+
+```bash
+python -m pip install -r environment/requirements.txt
+python -m study_transfer --restore visdsr-calibration.zip
+python -m eval.run --split pilot2 --model model1 --score-only
+python -m eval.run --split pilot2 --model model2 --score-only
+python -m analysis.analyze --split pilot2 --models model1 model2
+```
+
+These commands recompute calibration scores without a GPU, model weights, or inference. Calibration comparisons are descriptive; they are separate from the planned main analysis. Percentile bootstrap intervals at an accuracy floor can be degenerate and do not establish equivalence.
 
 ## Run on Kaggle
 
@@ -80,6 +96,18 @@ For a first run, import the Qwen notebook into Kaggle:
 The v2 project folder is `/kaggle/working/VisDSR_v2`. Its backup checks source fingerprints, calibration task bytes, and payload checksums. Earlier v1 exports are incompatible. Both a ZIP and Kaggle's extracted Dataset layout are supported. Exports omit the redundant nested cache ZIP that caused earlier upload problems.
 
 Every completed response is cached immediately; each bounded run also exports automatically. A lost runtime can still lose files that have not been exported and saved outside the session. Do not rely on Kaggle's temporary disk as the only copy.
+
+### Continue to the frozen main study
+
+After restoring the completed calibration, use the standalone [main runner](notebooks/kaggle_main.py) from the project directory:
+
+```bash
+python -m notebooks.kaggle_main --model model1 --max-new-calls 100
+```
+
+It verifies the freeze and both calibration sets, generates and validates main inputs when missing, and makes at most 100 new Qwen calls. Rerunning resumes; use `model2` for InternVL after Qwen completes. One model runs at a time. Smaller chunks are supported. Each chunk exports automatically, including after a normal interruption. Download the new backup before continuing or ending the session.
+
+At calibration's measured averages, four 100-call chunks per model would require about 12.85 hours for Qwen and 10.24 hours for InternVL, excluding setup and interruptions. Main execution and the final report remain outstanding.
 
 ## Check locally
 

@@ -1,6 +1,12 @@
 # Changelog
 
-## Unreleased: v2 preparation
+## Protocol freeze: 4 October 2026
+
+- Audited both complete v2 calibrations: Qwen 2/60 final matches with 18 format failures; InternVL 1/60 with 38 format failures. Preserved all previous responses.
+- Recorded the main-study decision and audited freeze, including low baseline accuracy, output-cap limitations, and the measured runtime estimate.
+- Added a standalone main runner with frozen-source and calibration checks, bounded calls, resume, and automatic interruption export. Prepared the calibration reproduction artifact for the protocol-freeze release.
+
+## V2 preparation
 
 - Audited the second Qwen v2 calibration chunk: 43/60 responses, two correct final maps, and eleven format failures. All earlier responses and all sixty InternVL results are preserved; seventeen Qwen requests remain.
 - Added a worked DSU example to the README with the exact calibration diagram, complete task, and independently checked expected states.
