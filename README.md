@@ -4,9 +4,20 @@ VisDSR studies sequential reasoning over disjoint-set union (DSU) forests. It as
 
 DSU makes every intermediate state checkable while requiring path compression, set-size comparisons, and a fixed union tie rule. A C++ simulator supplies ground truth, and an independent Python reference checks it.
 
-**Status:** InternVL has completed v2 calibration: 60/60 responses, one correct final map, and 38 output-format failures. T-dir and G-dir each scored 0/12; these floor results do not establish a modality effect. Qwen has completed 23/60 calibration requests, with one correct final map and three output-format failures. These Qwen results are incomplete; its remaining responses will use the same fixed tasks and settings, in chunks of at most 20 new calls. Main remains disabled until both models' calibration is reviewed and the protocol is frozen.
+## Current results
 
-Calibration covers the same difficulty cells as the planned main run: 8 or 16 elements, with one or four operations. Earlier Qwen pilots and an InternVL smoke test are preserved as feasibility results in [`REPORT.md`](REPORT.md). The pre-run design is in [`STUDY_V2.md`](STUDY_V2.md); audits and the next execution steps are in [`V2_SMOKE.md`](V2_SMOKE.md).
+Calibration is in progress. The latest reviewed backup contains:
+
+| Model | Calibration responses | Correct final maps | Format failures |
+| --- | ---: | ---: | ---: |
+| Qwen3-VL-8B-Instruct | 23/60 | 1/23 | 3/23 |
+| InternVL3.5-8B-HF | 60/60 | 1/60 | 38/60 |
+
+The Qwen results are incomplete. InternVL's text and diagram conditions each scored 0/12, so those results do not establish a modality effect. The main experiment has not started; it requires complete calibration review and a frozen protocol.
+
+Calibration covers 8 or 16 elements and one or four operations. The [study design](STUDY_V2.md) is the preserved plan written before these calls. The [calibration results and run log](V2_SMOKE.md) records subsequent observations and resume instructions. Earlier runs are documented in the [pilot and feasibility report](REPORT.md).
+
+The current project is published on `main`. Protocol version numbers distinguish the earlier pilots from the current experiment.
 
 ## Study design
 
@@ -26,12 +37,12 @@ The primary measure is final-parent-map exact match. The primary comparison is *
 
 ## Run on Kaggle
 
-Start with a new notebook and the revised Qwen file:
+For a first run, import the Qwen notebook into Kaggle:
 
 - [`qwen3_vl_v2_kaggle.ipynb`](notebooks/qwen3_vl_v2_kaggle.ipynb)
 - [`internvl35_v2_kaggle.ipynb`](notebooks/internvl35_v2_kaggle.ipynb)
 
-1. Download the Qwen notebook from the `study-v2` branch and import it into Kaggle. Enable a free GPU and Internet.
+1. Download the Qwen notebook from `main` and import it into Kaggle. Enable a free GPU and Internet.
 2. Keep `STAGE = "smoke"` and the review flags false. Run the cells from top to bottom. The default makes only three calls: T-dir, R-dir, and G-dir on the same four-operation calibration task.
 3. Download `visdsr_v2_results.zip` from the Output panel. Review the raw answers, strict parsing, correctness, tokens, memory, and latency before selecting calibration.
 4. After review, calibration runs at most 20 new responses per execution and reuses the smoke cache. Download each updated export. Attach the newest export as a private Dataset when resuming or starting InternVL.
@@ -72,7 +83,7 @@ The mock oracle checks caching and scoring without model inference; it supplies 
 | [`analysis/`](analysis/) | Paired statistics and figures |
 | [`study_transfer.py`](study_transfer.py) | Checked v2 backup export and restore |
 | [`tests/`](tests/) | Independent DSU reference and infrastructure checks |
-| [`STUDENT_UNDERSTANDING.md`](STUDENT_UNDERSTANDING.md) | Algorithm explanation and AI-assistance provenance |
+| [Algorithm explanation and implementation provenance](STUDENT_UNDERSTANDING.md) | DSU rules, condition controls, and AI-assisted work |
 
 ## Historical feasibility results
 
