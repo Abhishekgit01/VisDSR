@@ -2,6 +2,7 @@
 
 ## Unreleased: v2 preparation
 
+- Audited the complete InternVL v2 calibration: 60/60 responses, one correct final map, and 38 format failures. T-dir and G-dir each scored 0/12. Prepared Qwen calibration from the combined backup; main remains disabled.
 - Audited the second InternVL v2 calibration chunk: 43/60 responses, zero correct final maps, and 27 format failures. Earlier caches and aggregate records are preserved; seventeen InternVL requests remain.
 - Audited the first InternVL v2 calibration chunk: 23/60 responses, zero correct final maps, and 16 format failures. The earlier combined smoke payload is unchanged; calibration remains incomplete.
 - Added calibration recovery without notebook setup variables, with smoke-cache and input validation, a 20-call limit, and automatic export.

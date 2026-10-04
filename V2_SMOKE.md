@@ -263,3 +263,53 @@ Recorded mean latency across the 43 responses is 107.94 seconds, including the e
 In the current Kaggle session, rerun the same standalone recovery cell with `--model model2 --calibration` once. It reuses all 43 existing responses and makes the remaining seventeen requests, reaching **60/60**. When `BACKUP READY` appears, download `visdsr_v2_results.zip` directly from Output and submit the complete archive for review. A separate export cell is unnecessary because recovery exports automatically.
 
 If the runtime has lost its working files, attach this newest reviewed backup, `visdsr_v2_results (3).zip`, as the only VisDSR results input before recovery. Main remains disabled pending complete calibration for both models and the documented freeze decision.
+
+## InternVL calibration complete: 4 October 2026
+
+The final chunk added seventeen responses, completing all **60/60** InternVL requests on the twelve fixed tasks. Every condition now has twelve responses, with three tasks in each element-count and operation-count cell. Qwen still has three official calibration responses from its smoke and eight separate diagnostic records; 57 Qwen calibration requests remain.
+
+| Condition | Responses reviewed | Final exact matches | Full sequences correct | Format failures | Output-cap hits | Mean latency |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| T-dir | 12 | 0 | 0 | 1 | 0 | 21.67 s |
+| R-dir | 12 | 0 | 0 | 5 | 0 | 58.39 s |
+| G-dir | 12 | 0 | 0 | 11 | 6 | 254.02 s |
+| T-str | 12 | 1 | 1 | 9 | 0 | 28.40 s |
+| G-str | 12 | 0 | 0 | 12 | 1 | 98.49 s |
+| Total | 60 | 1 | 1 | 38 | 7 | 92.20 s |
+
+The correct response is `pilot2_0009/T-str`, a sixteen-element, one-operation find task. It transcribed the initial map and compressed the find path correctly. All three schema-valid T-str responses transcribed the initial map correctly, but only this response applied its operations correctly. Of the 22 valid study outputs overall, 21 failed the DSU state transitions. The 38 invalid outputs comprise nineteen top-level field mismatches, eleven invalid step-field responses, seven invalid JSON responses, and one response with the wrong step count. Invalid outputs retain their official zero scores without repair or retries.
+
+| Difficulty cell | Responses | Final exact matches | Format failures |
+| --- | ---: | ---: | ---: |
+| 8 elements, 1 operation | 15 | 0 | 9 |
+| 8 elements, 4 operations | 15 | 0 | 9 |
+| 16 elements, 1 operation | 15 | 1 | 7 |
+| 16 elements, 4 operations | 15 | 0 | 13 |
+
+T-dir and G-dir are both at the accuracy floor. These twelve paired tasks therefore supply no observed correctness contrast for the primary comparison. They do not establish modality equivalence, and the high format-failure rate also limits interpretation of DSU capability. Complete Qwen's preselected calibration before recording the main-study decision. This review authorizes collection of the remaining calibration responses under the existing protocol; it does not authorize main execution or further prompt tuning.
+
+### Complete archive audit
+
+The reviewed private `visdsr_v2_results (4).zip` has SHA-256 `9a20079f8594cb4e48acc3bb146d9f6a5c3cae414f2a8bca7cc2edda0339bce1` and size 425,386 bytes. It contains 105 payload files and the export marker, including sixty InternVL caches, three Qwen smoke caches, and the eight separate Qwen diagnostic records and their summary. The manifest records commit `039995417d9558d9018c68bcf46883a8d5da4f6f`, Transformers 4.57.1, PyTorch 2.11.0+cu128, and Graphviz 2.43.0.
+
+All payload checksums and all 21 protected source hashes passed. Compared with the preceding archive, seventeen cache files were added and the InternVL calibration raw JSONL and CSV expanded to sixty records. Every other earlier payload file is byte-identical, and all 43 earlier aggregate records are preserved unchanged.
+
+All 63 official cached requests match their prescribed model revisions, settings, system/user prompts, task hashes, image hashes, and request keys. The fixed sixty-request run order matches the configured seed. Recomputed strict scores and raw-response records agree exactly with the full InternVL CSV/JSONL and both three-response smoke exports. All twelve task answers match the independent Python DSU reference; all 24 source images match their recorded hashes and are 1024-pixel RGB images. Images were not regenerated, and no model was loaded or called during the audit.
+
+The recorded InternVL inference time totals 5,531.73 seconds, or 92.20 minutes, excluding model loading and setup. The largest per-device allocated peak is 7.43 GiB. Seven responses reached the 2,048-token cap. These measurements apply to this calibration and include the three earlier smoke calls; they are not a measured main-run duration.
+
+### Next: Qwen calibration
+
+Keep the combined backup outside Kaggle. In the same standalone recovery cell used for InternVL, change the model argument from `"model2"` to `"model1"` and keep `"--calibration"`:
+
+```python
+subprocess.run(
+    [sys.executable, str(root / "notebooks/kaggle_diagnostics.py"),
+     "--model", "model1", "--calibration"],
+    check=True,
+)
+```
+
+Keep the cell's imports, project path, and clone/pull setup. Run that cell once. Recovery checks the three existing Qwen smoke caches without inference, validates the unchanged tasks and images, and collects at most twenty new Qwen responses, reaching **23/60** after a complete first chunk. InternVL's sixty responses remain in the combined export. The inference subprocess from the previous chunk has exited, so this next stage loads only Qwen.
+
+When `BACKUP READY` appears, download `visdsr_v2_results.zip` directly from Output and submit it for review. Recovery exports automatically; no separate export cell is needed. Later full chunks progress through **43/60** and **60/60**, retaining all earlier responses. If the runtime has lost its files, attach the newest reviewed combined backup, currently `visdsr_v2_results (4).zip`, as the only VisDSR results Dataset before running recovery. A new notebook is unnecessary for this standalone cell. Main remains disabled until both complete calibrations have been reviewed and a main decision recorded.
