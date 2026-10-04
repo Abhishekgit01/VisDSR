@@ -234,3 +234,32 @@ Recorded mean latency across these 23 responses is 98.63 seconds, including the 
 In the current Kaggle session, rerun the same standalone recovery cell with `--model model2 --calibration`. It preserves existing responses and makes at most twenty new calls. A complete next chunk reaches **43/60**; the following chunk makes seventeen new calls and reaches **60/60**. Download the automatically exported `visdsr_v2_results.zip` after each chunk and review the complete archive when InternVL reaches sixty responses.
 
 If the runtime has lost its working files, attach the newest downloaded backup as the only VisDSR results input before running recovery. The newest reviewed backup at this point is `visdsr_v2_results (2).zip`. Continue once through the preselected requests; incorrect responses are retained, and no content retries or protocol changes are introduced from these interim scores. Main remains blocked pending complete calibration for both models and the documented freeze decision.
+
+## InternVL calibration progress: second chunk, 4 October 2026
+
+The second chunk added twenty responses, bringing the reviewed InternVL calibration to **43/60**. Qwen still has three official smoke responses and eight separate diagnostics. Seventeen InternVL and 57 Qwen calibration requests remain.
+
+| Condition | Responses reviewed | Final exact matches | Format failures |
+| --- | ---: | ---: | ---: |
+| T-dir | 12 | 0 | 1 |
+| R-dir | 7 | 0 | 3 |
+| G-dir | 8 | 0 | 8 |
+| T-str | 7 | 0 | 6 |
+| G-str | 9 | 0 | 9 |
+| Total | 43 | 0 | 27 |
+
+All sixteen valid study outputs have incorrect final maps. Format failures comprise fourteen top-level field mismatches, six invalid union-step fields, and seven invalid JSON responses. Seven responses reached the 2,048-token cap. Collection is incomplete and the condition counts are unequal; no paired modality-effect estimate or final calibration decision is made from this chunk.
+
+### Second chunk archive audit
+
+The reviewed private `visdsr_v2_results (3).zip` has SHA-256 `e58d48806bcc4d5a343a24e176da8b02ade26d0d74966f6aafb1da540794f491` and size 369,071 bytes. It contains 88 payload files and the export marker. Compared with the first chunk, twenty cache files were added and the calibration raw JSONL and score CSV expanded to 43 records. Every other earlier payload file is byte-identical, and all 23 earlier aggregate records are preserved unchanged. The run manifest records commit `9452a80f8b696c9aa1ddd4c28280b0e03e3f8bf2`.
+
+Every payload checksum and all 21 protected source hashes passed. Each of the 43 cache records matches its prescribed task, model revision, generation settings, exact prompts, image hash, and request key. Recomputed strict scores and raw-response records agree with the CSV and JSONL in the prescribed request order. All twelve task answers match the independent Python reference and all 24 source image hashes match. No model was loaded or called during the audit.
+
+Recorded mean latency across the 43 responses is 107.94 seconds, including the earlier smoke responses. The largest per-device allocated peak is 7.43 GiB. The protocol and inference settings remain unchanged.
+
+### Finish InternVL calibration
+
+In the current Kaggle session, rerun the same standalone recovery cell with `--model model2 --calibration` once. It reuses all 43 existing responses and makes the remaining seventeen requests, reaching **60/60**. When `BACKUP READY` appears, download `visdsr_v2_results.zip` directly from Output and submit the complete archive for review. A separate export cell is unnecessary because recovery exports automatically.
+
+If the runtime has lost its working files, attach this newest reviewed backup, `visdsr_v2_results (3).zip`, as the only VisDSR results input before recovery. Main remains disabled pending complete calibration for both models and the documented freeze decision.
