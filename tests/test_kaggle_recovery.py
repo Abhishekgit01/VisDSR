@@ -78,17 +78,71 @@ class KaggleRecoveryTests(unittest.TestCase):
 
     def test_interrupted_inference_still_exports_progress(self):
         self.populate_smoke()
+        for calibration in (False, True):
+            calls = []
+
+            def command(root, *parts):
+                calls.append(parts)
+                if "eval.diagnose" in parts or "--after-smoke-review" in parts:
+                    raise KeyboardInterrupt()
+
+            with self.subTest(calibration=calibration), \
+                    patch.object(recovery, "command", side_effect=command), \
+                    patch.object(recovery, "check_gpu"), contextlib.redirect_stdout(io.StringIO()):
+                with self.assertRaises(KeyboardInterrupt):
+                    recovery.run(self.root, self.inputs, self.export, "model1", calibration)
+            self.assertIn("manifest", calls[-2])
+            self.assertIn("--export", calls[-1])
+
+    def test_calibration_checks_inputs_before_one_bounded_chunk(self):
+        self.populate_smoke()
+        with patch.object(recovery, "command") as command, \
+                patch.object(recovery, "check_gpu"), contextlib.redirect_stdout(io.StringIO()):
+            recovery.run(self.root, self.inputs, self.export, "model2", calibration=True)
+        calls = [call.args[1:] for call in command.call_args_list]
+        score = next(i for i, parts in enumerate(calls) if "--score-only" in parts)
+        validation = next(i for i, parts in enumerate(calls) if "gen.validate" in parts)
+        inference = next(i for i, parts in enumerate(calls) if "--after-smoke-review" in parts)
+        self.assertLess(score, validation)
+        self.assertLess(validation, inference)
+        self.assertIn("model2", calls[inference])
+        self.assertEqual(calls[inference][-2:], ("--max-new-calls", "20"))
+        self.assertEqual(calls[inference][calls[inference].index("--split") + 1], "pilot2")
+        self.assertEqual(sum("--after-smoke-review" in parts for parts in calls), 1)
+        self.assertFalse(any("eval.diagnose" in parts or "gen.generate" in parts or "gen.render" in parts
+                             for parts in calls))
+        self.assertFalse(any("--restore-auto" in parts for parts in calls))
+        self.assertIn("--export", calls[-1])
+
+    def test_calibration_with_missing_smoke_stops_before_inference(self):
+        self.populate_smoke()
         calls = []
 
         def command(root, *parts):
             calls.append(parts)
-            if "eval.diagnose" in parts:
-                raise KeyboardInterrupt()
+            if "--score-only" in parts:
+                raise subprocess.CalledProcessError(1, parts)
 
         with patch.object(recovery, "command", side_effect=command), \
                 patch.object(recovery, "check_gpu"), contextlib.redirect_stdout(io.StringIO()):
-            with self.assertRaises(KeyboardInterrupt):
-                recovery.run(self.root, self.inputs, self.export, "model1")
+            with self.assertRaises(subprocess.CalledProcessError):
+                recovery.run(self.root, self.inputs, self.export, "model2", calibration=True)
+        self.assertFalse(any("--after-smoke-review" in parts for parts in calls))
+
+    def test_failed_calibration_validation_exports_without_new_calls(self):
+        self.populate_smoke()
+        calls = []
+
+        def command(root, *parts):
+            calls.append(parts)
+            if "gen.validate" in parts:
+                raise subprocess.CalledProcessError(1, parts)
+
+        with patch.object(recovery, "command", side_effect=command), \
+                patch.object(recovery, "check_gpu"), contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaises(subprocess.CalledProcessError):
+                recovery.run(self.root, self.inputs, self.export, "model2", calibration=True)
+        self.assertFalse(any("--after-smoke-review" in parts for parts in calls))
         self.assertIn("manifest", calls[-2])
         self.assertIn("--export", calls[-1])
 

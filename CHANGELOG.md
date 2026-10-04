@@ -2,6 +2,8 @@
 
 ## Unreleased: v2 preparation
 
+- Added calibration recovery without notebook setup variables, with smoke-cache and input validation, a 20-call limit, and automatic export.
+
 - Prepared a separate v2 protocol with shared worked examples and explicit JSON field types.
 - Matched calibration to the 8/16-element and 1/4-operation main design.
 - Added bounded inference, token and device logging, checked archive restore, and a freeze audit against raw caches.

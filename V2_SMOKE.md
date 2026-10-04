@@ -170,4 +170,38 @@ Use the current InternVL notebook with its saved project files. In its first cod
 
 If the runtime has reset, attach the newest combined export as the only VisDSR results input and rerun notebook setup before the selected-stage cell. The newest reviewed combined backup at this point is `visdsr_v2_results (1).zip`, not the earlier Qwen-only diagnostic ZIP.
 
+### Resume calibration after a kernel reset
+
+A new kernel has no `STAGE`, `ROOT`, or `run_command` variables. The standalone recovery cell below resumes the reviewed InternVL calibration without those globals. Enable GPU and Internet. Attach the newest downloaded combined export as the only VisDSR results Dataset if this session has lost its working files. If no calibration calls have completed, use the reviewed `visdsr_v2_results (1).zip`.
+
+Replace the failing selected-stage cell with this code and run only that cell:
+
+```python
+import subprocess
+import sys
+from pathlib import Path
+
+root = Path("/kaggle/working/VisDSR_v2")
+repo = "https://github.com/Abhishekgit01/VisDSR.git"
+
+if (root / ".git").exists():
+    subprocess.run(["git", "-C", str(root), "pull", "--ff-only",
+                    "origin", "study-v2"], check=True)
+elif not root.exists() or not any(root.iterdir()):
+    subprocess.run(["git", "clone", "--depth", "1", "--branch",
+                    "study-v2", repo, str(root)], check=True)
+elif not (root / "notebooks/kaggle_diagnostics.py").exists():
+    raise RuntimeError("Use the current study-v2 project files")
+
+subprocess.run(
+    [sys.executable, str(root / "notebooks/kaggle_diagnostics.py"),
+     "--model", "model2", "--calibration"],
+    check=True,
+)
+```
+
+The recovery script installs the existing pinned dependencies, restores saved data when required, checks all three exact smoke caches without inference, builds the simulator, and performs the notebook's full task/image validation. It resumes one calibration chunk with at most twenty new calls and exports automatically on completion or normal interruption. It preserves matching caches and source images. Missing smoke caches or failed validation stop before new inference. Main remains disabled.
+
+Download `/kaggle/working/visdsr_v2_results.zip` when `BACKUP READY` appears. Rerun this same cell for later chunks, keeping each updated backup outside the session. Full chunks from the smoke archive progress through 23/60, 43/60, and 60/60. This recovery change does not alter any protected protocol source or the existing backup format.
+
 The reviewed archive contains six official smoke responses and eight Qwen diagnostic responses. The full calibration stage, freeze, and main run have not started. [`STUDY_V2.md`](STUDY_V2.md) is the preserved pre-run plan; this file records subsequent observations and the decision to start calibration.
