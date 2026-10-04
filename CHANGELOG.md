@@ -2,6 +2,7 @@
 
 ## Unreleased: v2 preparation
 
+- Added a worked DSU example to the README with the exact calibration diagram, complete task, and independently checked expected states.
 - Published the current study on `main`, updated the Kaggle notebook defaults, and clarified calibration progress in the README and implementation notes.
 - Audited the first Qwen v2 calibration chunk: 23/60 responses, one correct final map, and three format failures. All sixty InternVL responses and earlier study files are unchanged; 37 Qwen requests remain.
 - Audited the complete InternVL v2 calibration: 60/60 responses, one correct final map, and 38 format failures. T-dir and G-dir each scored 0/12. Prepared Qwen calibration from the combined backup; main remains disabled.

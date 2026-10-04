@@ -31,6 +31,34 @@ The current project is published on `main`. Protocol version numbers distinguish
 
 All conditions use identical operations and require the parent map after each operation, plus every `find` result. Transcription is a JSON object. Invalid output counts as incorrect; responses are preserved without repairs or content retries.
 
+### Worked example
+
+The first operation in calibration task `pilot2_0004` is `find(E)`. Its initial parent map is:
+
+```json
+{"A":"B","B":"B","C":"C","D":"C","E":"D","F":"C","G":"H","H":"B"}
+```
+
+The same forest is shown below. Arrows point from child to parent; roots `B` and `C` point to themselves.
+
+```mermaid
+flowchart BT
+    A --> B
+    H --> B
+    G --> H
+    D --> C
+    E --> D
+    F --> C
+```
+
+`find(E)` follows `E → D → C`, returns `C`, and changes `E`'s parent to `C` through path compression. The expected state after this operation is:
+
+```json
+{"A":"B","B":"B","C":"C","D":"C","E":"C","F":"C","G":"H","H":"B"}
+```
+
+The [exact diagram input](docs/examples/dsu-forest.png) and [complete task with expected answers](docs/examples/dsu-task.json) are included. The PNG is copied unchanged from the audited calibration input. The diagram above illustrates the forest for this README; model calls use the original PNG. These are simulator answers, and model responses are scored against them.
+
 The planned main study has 80 fresh tasks, five conditions, and two open-weight families: [Qwen3-VL-8B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct) and [InternVL3.5-8B-HF](https://huggingface.co/OpenGVLab/InternVL3_5-8B-HF). That is 800 independent responses. Models use pinned revisions, local 4-bit NF4 weights, and greedy decoding. No paid inference API is used.
 
 The primary measure is final-parent-map exact match. The primary comparison is **T-dir minus G-dir**, paired by task. Secondary measures include full-sequence correctness, transcription accuracy, and format errors. Main execution requires reviewed calibration and an audited protocol freeze; preparation does not establish a modality effect.

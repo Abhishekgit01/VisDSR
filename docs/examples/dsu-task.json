@@ -1,0 +1,129 @@
+{
+  "difficulty": {
+    "equal_size_ties": 1,
+    "maximum_compressed_path_length": 2,
+    "no_op_unions": 1,
+    "number_of_finds": 2,
+    "number_of_unions": 2,
+    "total_parent_changes": 4
+  },
+  "id": "pilot2_0004",
+  "initial": {
+    "A": "B",
+    "B": "B",
+    "C": "C",
+    "D": "C",
+    "E": "D",
+    "F": "C",
+    "G": "H",
+    "H": "B"
+  },
+  "n": 8,
+  "operations": [
+    {
+      "a": "E",
+      "kind": "find"
+    },
+    {
+      "a": "G",
+      "b": "F",
+      "kind": "union"
+    },
+    {
+      "a": "H",
+      "kind": "find"
+    },
+    {
+      "a": "D",
+      "b": "C",
+      "kind": "union"
+    }
+  ],
+  "prelude": [
+    {
+      "a": "C",
+      "b": "F",
+      "kind": "union"
+    },
+    {
+      "a": "D",
+      "b": "E",
+      "kind": "union"
+    },
+    {
+      "a": "C",
+      "b": "D",
+      "kind": "union"
+    },
+    {
+      "a": "B",
+      "b": "A",
+      "kind": "union"
+    },
+    {
+      "a": "H",
+      "b": "G",
+      "kind": "union"
+    },
+    {
+      "a": "B",
+      "b": "H",
+      "kind": "union"
+    }
+  ],
+  "size": "small",
+  "split": "pilot2",
+  "steps": [
+    {
+      "find_result": "C",
+      "state": {
+        "A": "B",
+        "B": "B",
+        "C": "C",
+        "D": "C",
+        "E": "C",
+        "F": "C",
+        "G": "H",
+        "H": "B"
+      }
+    },
+    {
+      "state": {
+        "A": "B",
+        "B": "B",
+        "C": "B",
+        "D": "C",
+        "E": "C",
+        "F": "C",
+        "G": "B",
+        "H": "B"
+      }
+    },
+    {
+      "find_result": "B",
+      "state": {
+        "A": "B",
+        "B": "B",
+        "C": "B",
+        "D": "C",
+        "E": "C",
+        "F": "C",
+        "G": "B",
+        "H": "B"
+      }
+    },
+    {
+      "state": {
+        "A": "B",
+        "B": "B",
+        "C": "B",
+        "D": "B",
+        "E": "C",
+        "F": "C",
+        "G": "B",
+        "H": "B"
+      }
+    }
+  ],
+  "structure": "dsu"
+}
