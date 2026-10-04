@@ -205,3 +205,32 @@ The recovery script installs the existing pinned dependencies, restores saved da
 Download `/kaggle/working/visdsr_v2_results.zip` when `BACKUP READY` appears. Rerun this same cell for later chunks, keeping each updated backup outside the session. Full chunks from the smoke archive progress through 23/60, 43/60, and 60/60. This recovery change does not alter any protected protocol source or the existing backup format.
 
 The reviewed archive contains six official smoke responses and eight Qwen diagnostic responses. The full calibration stage, freeze, and main run have not started. [`STUDY_V2.md`](STUDY_V2.md) is the preserved pre-run plan; this file records subsequent observations and the decision to start calibration.
+
+## InternVL calibration progress: 4 October 2026
+
+The first calibration chunk added twenty responses and reused the three smoke responses, giving **23/60** completed InternVL requests. Qwen still has its three official smoke responses and eight separate diagnostic records. There are 37 InternVL and 57 Qwen calibration requests remaining. Neither full calibration nor the main study is complete.
+
+| Condition | Responses reviewed | Final exact matches | Format failures |
+| --- | ---: | ---: | ---: |
+| T-dir | 5 | 0 | 0 |
+| R-dir | 5 | 0 | 3 |
+| G-dir | 5 | 0 | 5 |
+| T-str | 3 | 0 | 3 |
+| G-str | 5 | 0 | 5 |
+| Total | 23 | 0 | 16 |
+
+All seven valid study outputs also have incorrect final maps. Format errors comprise eight top-level field mismatches, five invalid union-step fields, and three invalid JSON responses. Three diagram responses reached the 2,048-token cap. The counts by condition and difficulty cell are incomplete and unequal; this chunk supplies no paired modality-effect estimate or final calibration decision.
+
+### Partial archive audit
+
+The reviewed private `visdsr_v2_results (2).zip` has SHA-256 `d4ee5fdf79f9117cf0e7ba282f3d39cd4d551c0199db8bf24578a433003b074c` and size 300,953 bytes. It contains 68 payload files and the export marker. All 46 payload files from the previous combined smoke archive are byte-identical. The new files are twenty InternVL caches, a 23-response calibration raw export, and its score CSV. The run manifest records commit `9452a80f8b696c9aa1ddd4c28280b0e03e3f8bf2`.
+
+Every payload checksum and all 21 protected source hashes passed. An isolated checkout restored the archive, checked each of the 23 requests against its prescribed model revision, settings, exact system/user prompts, task hash, image hash, and cache key, and recomputed the official scores. The CSV rows and raw JSONL records match the caches exactly; no duplicate or unaccounted InternVL request was found. All twelve task answers match the independent Python DSU reference and all 24 image hashes match their manifest. Dry-run planning reports sixty requests with 23 caches present. No model was loaded or called during the audit.
+
+Recorded mean latency across these 23 responses is 98.63 seconds, including the three earlier smoke responses. The largest per-device allocated peak is 7.43 GiB. These partial timings include three output-cap failures and do not supply a reliable main-run estimate. The model configuration, tasks, images, prompts, and scorer remain unchanged.
+
+### Continue the fixed calibration
+
+In the current Kaggle session, rerun the same standalone recovery cell with `--model model2 --calibration`. It preserves existing responses and makes at most twenty new calls. A complete next chunk reaches **43/60**; the following chunk makes seventeen new calls and reaches **60/60**. Download the automatically exported `visdsr_v2_results.zip` after each chunk and review the complete archive when InternVL reaches sixty responses.
+
+If the runtime has lost its working files, attach the newest downloaded backup as the only VisDSR results input before running recovery. The newest reviewed backup at this point is `visdsr_v2_results (2).zip`. Continue once through the preselected requests; incorrect responses are retained, and no content retries or protocol changes are introduced from these interim scores. Main remains blocked pending complete calibration for both models and the documented freeze decision.

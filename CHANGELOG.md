@@ -2,6 +2,7 @@
 
 ## Unreleased: v2 preparation
 
+- Audited the first InternVL v2 calibration chunk: 23/60 responses, zero correct final maps, and 16 format failures. The earlier combined smoke payload is unchanged; calibration remains incomplete.
 - Added calibration recovery without notebook setup variables, with smoke-cache and input validation, a 20-call limit, and automatic export.
 
 - Prepared a separate v2 protocol with shared worked examples and explicit JSON field types.
