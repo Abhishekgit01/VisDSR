@@ -8,14 +8,26 @@ DSU makes every intermediate state checkable while requiring path compression, s
 
 ## Current results
 
-Calibration is complete. The latest reviewed backup contains:
+Qwen's main run is complete and audited: **400/400 responses**, with 80 per condition. InternVL's main run is next; both calibrations are complete.
+
+| Qwen main condition | Correct final maps | Format failures |
+| --- | ---: | ---: |
+| T-dir | 0/80 | 1/80 |
+| R-dir | 0/80 | 26/80 |
+| G-dir | 0/80 | 37/80 |
+| T-str | 3/80 | 50/80 |
+| G-str | 0/80 | 24/80 |
+
+The completed Qwen run has 3/400 correct final maps, 138 format failures, and 62 responses that reached the output-token cap. Raw responses were scored without repairs or retries. Zero accuracy in both primary conditions limits interpretation of the modality comparison; it does not establish equivalence. The [Qwen main results and verification](QWEN_MAIN_RESULTS.md) records the audit and reproduction limits. Combined analysis awaits InternVL's 400 main responses.
+
+The separate calibration results are:
 
 | Model | Calibration responses | Correct final maps | Format failures |
 | --- | ---: | ---: | ---: |
 | Qwen3-VL-8B-Instruct | 60/60 | 2/60 | 18/60 |
 | InternVL3.5-8B-HF | 60/60 | 1/60 | 38/60 |
 
-Qwen's text and diagram conditions scored 2/12 and 0/12; InternVL scored 0/12 in both. Low baseline accuracy and frequent format failures limit interpretation of a modality comparison. The [main-study decision](MAIN_DECISION.md) records these limits and the rationale for collecting fresh tasks. The protocol is frozen; no main model responses have been collected.
+Qwen's calibration text and diagram conditions scored 2/12 and 0/12; InternVL scored 0/12 in both. Low baseline accuracy and frequent format failures limit interpretation of a modality comparison. The [main-study decision](MAIN_DECISION.md) records these limits and the rationale for collecting fresh tasks. The protocol remains frozen.
 
 Calibration covers 8 or 16 elements and one or four operations. The [study design](STUDY_V2.md) is the preserved plan written before these calls. The [calibration results and run log](V2_SMOKE.md) records subsequent observations and resume instructions. Earlier runs are documented in the [pilot and feasibility report](REPORT.md).
 
@@ -107,7 +119,9 @@ python -m notebooks.kaggle_main --model model1 --max-new-calls 100
 
 It verifies the freeze and both calibration sets, generates and validates main inputs when missing, and makes at most 100 new Qwen calls. Rerunning resumes; use `model2` for InternVL after Qwen completes. One model runs at a time. Smaller chunks are supported. Each chunk exports automatically, including after a normal interruption. Download the new backup before continuing or ending the session.
 
-At calibration's measured averages, four 100-call chunks per model would require about 12.85 hours for Qwen and 10.24 hours for InternVL, excluding setup and interruptions. Main execution and the final report remain outstanding.
+Qwen's 400 main responses have now been verified. To continue with InternVL, import [`internvl35_main_kaggle.ipynb`](notebooks/internvl35_main_kaggle.ipynb) into a new Kaggle notebook and attach the verified completed-Qwen backup as a private Dataset. Enable a free GPU and Internet, then run its two code cells in order. It restores both calibrations and the main inputs, verifies the freeze and original images, and collects InternVL responses in batches of at most 100. Completed Qwen responses are reused unchanged. Download the updated export when finished or interrupted.
+
+InternVL calibration averaged 92.20 seconds per response, giving an estimate of 10.24 hours for 400 calls, excluding setup and interruptions. Actual main duration may differ. InternVL collection, combined analysis, the final report, and the reproducibility release remain outstanding.
 
 ## Check locally
 
