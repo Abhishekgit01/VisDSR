@@ -43,7 +43,7 @@
     "diagnostics/pilot/FREEZE.json": "8d97957b7a18c49a17c8ea7efb721961b6d67e9c9e45cde7ad3bbffc2b3e760f",
     "interventions/__init__.py": "7e277632b322e1fa1f2a812258f20bb910c3ab68667dae283123438c658b6397",
     "interventions/protocol.py": "8347b5c13d794aaf37f52548d4130dad830cc286715eb644bf1e2a2ad34def1e",
-    "interventions/provider.py": "0b82f7cfddd3966e162bd3aecd470d83b8c893625fe6c2f1293fb99aa72424a4",
+    "interventions/provider.py": "3171ae3ff1c45fba54e802cc8cd8763b4f62b6eb0a87146110a025e06808c686",
     "interventions/executor.py": "f6f93a942d9ffe387249da23ed0a814379eebca4da388b5558bac4bacb591c15",
     "interventions/run.py": "7a3c53a80d4fdd54f161e14285405377b66cf19dac7f7b8733535c6f74d26b11",
     "interventions/report.py": "63ccabb34435d9ea1bb4512b96d1ee560681a724aaa2f7461ee119732df6c527",
@@ -51,7 +51,7 @@
     "interventions/overnight.py": "5304c009bb3d15a980e77553793d46e030c0cae0d6976e5722a6ad4a9ccbb157",
     "interventions/__main__.py": "c999155104aea93bc4fdcafcc63fd694b7bb2cec90d0355c1f0799d661f7c282",
     "interventions/requirements.txt": "65d865650e553155f7d2103903e3a5e4db6174c49ac93f6cb42b70d70e4e736b",
-    "docs/INTERVENTIONS.md": "7050925d2e2da7550e96d0a7f63a729f53251869fbd1190441567077fe20611a",
+    "docs/INTERVENTIONS.md": "deaea8a187e92482f400a96f2a05898cb8433194a45f78842c5c287efe6fea38",
     "notebooks/dsu_improvements_overnight.ipynb": "35633676b11f9e97d7f74888625908454d9084cc5d181a94f380ae4632672f3b"
   },
   "arms": [
@@ -64,5 +64,14 @@
   "baseline_reuse": "32 identical diagnostic update records; no regenerated baseline answers",
   "scope": "exploratory development; unchanged difficulty; no held-out confirmation claim",
   "assisted": "reuse actual text/rendered/diagram extractions, validate predicted forest, fixed DSU executor; no gold correction",
-  "execution": "one model per GPU; parallel when two CUDA GPUs available; one load per model; no notebook time cutoff"
+  "execution": "one model per GPU; parallel when two CUDA GPUs available; one load per model; no notebook time cutoff",
+  "implementation_amendments": [
+    {
+      "date": "2026-10-07",
+      "previous_source_commit": "309cabd6fd55b41b581a518df348e9905e89bbbd",
+      "previous_freeze_sha256": "7d9ffaa5a6c18da079cfab8ecf75aa5881df8046d0e31b76aee47b2012983fcd",
+      "reason": "Kaggle decoder preflight failed before inference; select logits CUDA device for Triton masking and compare GPU masks with the CPU reference.",
+      "protocol_changes": "none; requests, prompts, grammars, tasks, models, settings, and both earlier freezes unchanged"
+    }
+  ]
 }

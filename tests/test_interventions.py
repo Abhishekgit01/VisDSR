@@ -5,10 +5,12 @@ import contextlib
 import importlib.util
 import io
 import json
+import sys
 import tempfile
 import unittest
 import zipfile
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import diagnostics.protocol as diagnostic
@@ -196,10 +198,68 @@ class InterventionTests(unittest.TestCase):
         self.assertNotIn("COLLECTION_TIME_LIMIT_HOURS", namespace)
         self.assertNotIn("FINISH_BY_8AM_IST", namespace)
 
+    def test_grammar_adapter_selects_tensor_device_and_restores_after_failure(self):
+        current = [0]
+        cpu = SimpleNamespace(device=SimpleNamespace(type="cpu", index=None))
+        gpu = SimpleNamespace(device=SimpleNamespace(type="cuda", index=1))
+
+        @contextlib.contextmanager
+        def device_of(scores):
+            previous = current[0]
+            if scores.device.type == "cuda":
+                current[0] = scores.device.index
+            try:
+                yield
+            finally:
+                current[0] = previous
+
+        def kernel(ids, scores):
+            if scores.device.type == "cuda" and current[0] != scores.device.index:
+                raise ValueError("Pointer argument (at 0) cannot be accessed from Triton")
+            self.assertIs(ids, input_ids)
+            return scores
+
+        input_ids = object()
+        with patch.dict(sys.modules, {"torch": SimpleNamespace(cuda=SimpleNamespace(device_of=device_of))}):
+            with self.assertRaisesRegex(ValueError, "Pointer argument"):
+                kernel(input_ids, gpu)
+            processor = provider.DeviceLogitsProcessor(kernel)
+            self.assertIs(processor(input_ids, gpu), gpu)
+            self.assertEqual(current[0], 0)
+            self.assertIs(processor(input_ids, cpu), cpu)
+            self.assertEqual(current[0], 0)
+
+            def failing_kernel(ids, scores):
+                self.assertEqual(current[0], 1)
+                raise RuntimeError("adapter failure")
+
+            with self.assertRaisesRegex(RuntimeError, "adapter failure"):
+                provider.DeviceLogitsProcessor(failing_kernel)(input_ids, gpu)
+            self.assertEqual(current[0], 0)
+
+    @unittest.skipUnless(importlib.util.find_spec("xgrammar"), "optional pinned decoder environment required")
+    def test_cuda_mask_on_second_device_matches_cpu_and_restores_current_device(self):
+        import torch
+        import xgrammar as xgr
+        if torch.cuda.device_count() < 2:
+            self.skipTest("two CUDA devices required for the Triton regression")
+        chars = [chr(value) for value in range(32, 127)]
+        info = xgr.TokenizerInfo(["<eos>", *chars], stop_token_ids=[0])
+        compiler = xgr.GrammarCompiler(info, max_threads=2)
+        compiled = compiler.compile_grammar(xgr.Grammar.from_ebnf(protocol.grammar(self.tasks[0])))
+        tokens = [chars.index(char) + 1 for char in '{"']
+        with torch.cuda.device(0):
+            provider._check_cuda_mask(compiled, tokens, 0, info.vocab_size, "cuda:1")
+            self.assertEqual(torch.cuda.current_device(), 0)
+        with torch.cuda.device(1):
+            provider._check_cuda_mask(compiled, tokens, 0, info.vocab_size, "cuda:0")
+            self.assertEqual(torch.cuda.current_device(), 1)
+
     @unittest.skipUnless(importlib.util.find_spec("xgrammar"), "optional pinned decoder environment required")
     def test_real_grammar_and_hf_adapter_allow_wrong_values_and_block_bad_structure(self):
         import torch
         import xgrammar as xgr
+        from transformers import LogitsProcessorList
         from xgrammar.contrib.hf import LogitsProcessor
         chars = [chr(value) for value in range(32, 127)]
         info = xgr.TokenizerInfo(["<eos>", *chars], stop_token_ids=[0])
@@ -217,7 +277,7 @@ class InterventionTests(unittest.TestCase):
             self.assertFalse(xgr.GrammarMatcher(compiled).accept_string(raw.replace('"A":"A"', '"A":"Z"', 1)))
             self.assertFalse(xgr.GrammarMatcher(compiled).accept_string(raw.replace('"op":1', '"op":2', 1)))
             self.assertFalse(xgr.GrammarMatcher(compiled).accept_string('{"steps":[]}'))
-            processor = LogitsProcessor(compiled)
+            processor = LogitsProcessorList([provider.DeviceLogitsProcessor(LogitsProcessor(compiled))])
             ids = torch.tensor([[0]])
             for char in raw:
                 token = chars.index(char) + 1

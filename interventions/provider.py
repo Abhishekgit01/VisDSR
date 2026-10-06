@@ -9,6 +9,21 @@ from eval.providers.local import LocalModel
 from interventions.protocol import grammar
 
 
+class DeviceLogitsProcessor:
+    """Launch the official grammar adapter on the logits' CUDA device."""
+
+    def __init__(self, processor):
+        self.processor = processor
+
+    def __call__(self, input_ids, scores):
+        import torch
+        # Triton uses the current CUDA device, which may differ from the
+        # tensor's device. device_of is a no-op for CPU logits and restores
+        # the caller's device even when the adapter raises an exception.
+        with torch.cuda.device_of(scores):
+            return self.processor(input_ids, scores)
+
+
 class InterventionModel(LocalModel):
     def __init__(self, settings: dict):
         super().__init__(settings)
@@ -30,7 +45,7 @@ class InterventionModel(LocalModel):
         rule = grammar(task)
         if rule not in self.compiled:
             self.compiled[rule] = self.compiler.compile_grammar(xgr.Grammar.from_ebnf(rule))
-        processor = LogitsProcessor(self.compiled[rule])
+        processor = DeviceLogitsProcessor(LogitsProcessor(self.compiled[rule]))
         setup_seconds = time.monotonic() - started
         original_generate = self.model.generate
         self.model.generate = partial(original_generate, logits_processor=[processor])
@@ -42,13 +57,32 @@ class InterventionModel(LocalModel):
                 "grammar_setup_seconds": setup_seconds}
 
 
+def _check_cuda_mask(compiled, tokens, stop_token: int, vocab: int, device: str) -> None:
+    """Compare GPU masking to the CPU reference on the same token prefix."""
+    import torch
+    from xgrammar.contrib.hf import LogitsProcessor
+    processor = DeviceLogitsProcessor(LogitsProcessor(compiled))
+    reference = LogitsProcessor(compiled)
+    ids = torch.tensor([[stop_token]], device=device)
+    for token in tokens[:2]:
+        scores = torch.zeros((1, vocab), device=device)
+        scores[0, token] = 1
+        expected = reference(ids.cpu(), scores.cpu())
+        masked = processor(ids, scores)
+        if not torch.isfinite(masked[0, token]).item():
+            raise RuntimeError("GPU grammar mask rejected a valid token")
+        if not torch.equal(masked.cpu(), expected):
+            raise RuntimeError("GPU grammar mask differs from the CPU reference")
+        ids = torch.cat((ids, torch.tensor([[token]], device=device)), dim=1)
+    torch.cuda.synchronize(device)
+
+
 def decoder_check() -> None:
     """Compile all task grammars with each actual tokenizer, without model weights."""
     import json
     import torch
     import xgrammar as xgr
     from transformers import AutoConfig, AutoTokenizer
-    from xgrammar.contrib.hf import LogitsProcessor
     from diagnostics.protocol import load_panel
     frozen, tasks, _ = load_panel()
     for model in frozen["models"]:
@@ -76,15 +110,9 @@ def decoder_check() -> None:
                 raise RuntimeError("task grammar does not terminate correctly")
             for index in range(torch.cuda.device_count()):
                 device = f"cuda:{index}"
-                processor = LogitsProcessor(compiled)
-                ids = torch.tensor([[info.stop_token_ids[0]]], device=device)
-                for token in tokens[:2]:
-                    scores = torch.full((1, vocab), float("-inf"), device=device)
-                    scores[0, token] = 0
-                    masked = processor(ids, scores)
-                    if not torch.isfinite(masked[0, token]).item():
-                        raise RuntimeError("GPU grammar mask rejected a valid token")
-                    ids = torch.cat((ids, torch.tensor([[token]], device=device)), dim=1)
-                torch.cuda.synchronize(index)
+                try:
+                    _check_cuda_mask(compiled, tokens, info.stop_token_ids[0], vocab, device)
+                except (RuntimeError, ValueError) as exc:
+                    raise RuntimeError(f"GPU grammar check failed for {model['name']} on {device}: {exc}") from exc
         print(f"DECODER CHECK PASSED: {model['name']}, 8 grammars, actual tokenizer, no weights loaded", flush=True)
     print(f"GPU MASK CHECK: {torch.cuda.device_count()} CUDA devices tested (zero means CPU checks only)", flush=True)

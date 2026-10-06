@@ -56,3 +56,11 @@ python -m interventions restore --input /path/to/visdsr_improvements_backup.zip
 ```
 
 CPU checks validate request identity, structural grammar behavior, the executor against independent simulator truths, paired scoring, backup integrity, and orchestration. GPU inference remains to be measured. No positive accuracy result is claimed in advance.
+
+## Decoder implementation amendment, 7 October 2026
+
+The first Kaggle setup stopped in `decoder-check` with Triton's `Pointer argument (at 0) cannot be accessed` error, before loading model weights or collecting responses. The original check allocated logits on each GPU but did not select that GPU as the current CUDA device for the kernel launch. The official XGrammar 0.2.8 adapter dispatches CUDA masking to Triton without a device guard. [PyTorch's device context](https://docs.pytorch.org/docs/stable/generated/torch.cuda.device_of.html) selects the tensor's device and restores the caller's selection; the [Triton issue](https://github.com/triton-lang/triton/issues/2441) reports the same failure on a second GPU.
+
+The adapter now runs inside that device context in both preflight and inference. Preflight also compares all masked logits against the CPU reference for two valid prefix tokens on every visible GPU. This is an implementation correction before collection: requests, prompts, task difficulty, grammar rules, model revisions, and generation settings are unchanged. Only the separate intervention source freeze is updated; the original study and diagnostic freeze remain intact. CPU and simulated device-context regressions pass locally. The two-GPU regression requires CUDA hardware and remains covered by Kaggle's mandatory preflight.
+
+To update the checkout from the failed setup, run `git pull --ff-only origin main` inside `/kaggle/working/VisDSR_improvements`, then rerun Configuration and Setup. Use **Save Version → Save & Run All** for overnight collection.
