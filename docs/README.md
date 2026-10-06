@@ -15,6 +15,10 @@ The current study is complete. Planning documents and earlier collection logs re
 | [Changelog](../CHANGELOG.md) | Project milestones through completion |
 | [Citation](../CITATION.cff) | Software and results-release citation metadata |
 
+## Proposed future work
+
+[Reading, DSU updates, and response format](FOLLOW_UP.md) proposes six matched diagnostic requests, a fixed eight-forest pilot for both checkpoints, and a gate before a separate held-out confirmation study. It is a proposal, not an implemented or completed experiment.
+
 ## Preserved v2 planning and calibration
 
 | Document | Role |

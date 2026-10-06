@@ -1,5 +1,10 @@
 # Changelog
 
+## Follow-up proposal: 6 October 2026
+
+- Added a separate research proposal motivated by the completed study's extraction, state-update, and schema failures. It specifies six matched diagnostic requests, a fixed eight-forest pilot, explicit feasibility gates, and requirements for prospective power planning before confirmation.
+- Linked the proposal from the README, documentation index, and main report. The proposal has not been implemented or run; its observations are sourced from the completed study.
+
 ## Main study complete: 6 October 2026
 
 - Completed 400 Qwen and 400 InternVL main responses on 80 tasks and five conditions. Audited all 920 main/calibration caches, recomputed the official scores and combined tables, and replayed all 92 task truths through the simulator.

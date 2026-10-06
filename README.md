@@ -129,6 +129,8 @@ make stress
 
 The [documentation index](docs/README.md) separates the completed study from the preserved planning documents, calibration logs, and historical v1 feasibility results. Historical responses are not pooled with v2.
 
+The [follow-up research proposal](docs/FOLLOW_UP.md) sets out matched controls for initial-state extraction, DSU updates, and response formatting, with a fixed diagnostic pilot and criteria for proceeding. It is proposed future work; no follow-up results have been collected.
+
 Complete generated datasets and raw-response archives are distributed as release assets. Small reviewed examples are included in the repository documentation.
 
 ## License and citation

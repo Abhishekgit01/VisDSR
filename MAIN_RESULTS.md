@@ -122,3 +122,7 @@ The frozen analysis writes `summary_main_model1_model2.csv`, `comparisons_main_m
 ## Release and completion
 
 The [results release](https://github.com/Abhishekgit01/VisDSR/releases/tag/v2.0-results) packages the byte-identical final export as `visdsr-main-results.zip`, its audit as `visdsr-main-verification.json`, the combined tables and figure, and asset checksums. The earlier calibration release remains available separately. Main collection, raw-response verification, combined analysis, and the results report are complete. The low-accuracy outcome is retained without further prompt selection or content retries.
+
+## Follow-up research direction
+
+The separate [follow-up proposal](docs/FOLLOW_UP.md) addresses the observed accuracy floor with matched extraction requests, DSU updates from a supplied correct state, and a copy-solution control. It specifies a fixed diagnostic pilot and a feasibility gate before any further confirmation study. This is proposed future work with no collected results; it does not add evidence to the completed study.
