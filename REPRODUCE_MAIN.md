@@ -1,6 +1,6 @@
 # Reproduce the completed main study
 
-The complete audited study artifact is prepared for the [main-results release](https://github.com/Abhishekgit01/VisDSR/releases/tag/v2.0-results). Its public upload awaits explicit owner approval; the download commands below apply once that release is published. Scoring and analysis require no GPU, model weights, API key, or paid service.
+The [main-results release](https://github.com/Abhishekgit01/VisDSR/releases/tag/v2.0-results) contains the complete audited study data. Scoring and analysis require no GPU, model weights, API key, or paid service.
 
 ## Release files
 

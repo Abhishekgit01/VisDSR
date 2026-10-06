@@ -2,8 +2,6 @@
 
 **Evaluating DSU Reasoning from Text and Diagrams**
 
-**Release status:** the report and reproduction guide are published. The complete data artifact is prepared and audited; its public upload awaits explicit owner approval. Release-download links below will become available after publication.
-
 VisDSR studies sequential reasoning over disjoint-set union (DSU) forests. It asks how model accuracy changes when the same starting state is supplied as a parent map, an image of that map, or a forest diagram. Two additional conditions ask the model to transcribe the initial state before applying operations.
 
 DSU makes every intermediate state checkable while requiring path compression, set-size comparisons, and a fixed union tie rule. A C++ simulator supplies ground truth, and an independent Python reference checks it.
@@ -20,7 +18,7 @@ Both main runs are complete and audited: **400 Qwen + 400 InternVL responses**, 
 | T-str | 3/80 | 2/80 |
 | G-str | 0/80 | 0/80 |
 
-Qwen has 3/400 correct final maps and 138 format failures; InternVL has 4/400 and 281. Raw responses were scored without repairs or retries. The primary T-dir minus G-dir differences are 0.00 and 2.50 percentage points, respectively; both Holm-adjusted exact p-values are 1.00. Low accuracy and frequent schema failures limit interpretation and do not establish modality equivalence. The [combined main results and verification](MAIN_RESULTS.md) records the paired analysis, output caps, recovery audit, and reproduction limits. The prepared main-results artifact includes the original inputs and all raw responses; the [reproduction guide](REPRODUCE_MAIN.md) describes cached scoring without a GPU.
+Qwen has 3/400 correct final maps and 138 format failures; InternVL has 4/400 and 281. Raw responses were scored without repairs or retries. The primary T-dir minus G-dir differences are 0.00 and 2.50 percentage points, respectively; both Holm-adjusted exact p-values are 1.00. Low accuracy and frequent schema failures limit interpretation and do not establish modality equivalence. The [combined main results and verification](MAIN_RESULTS.md) records the paired analysis, output caps, recovery audit, and reproduction limits. The [main-results release](https://github.com/Abhishekgit01/VisDSR/releases/tag/v2.0-results) includes the original inputs and all raw responses; [reproduce the scores without a GPU](REPRODUCE_MAIN.md).
 
 The separate calibration results are:
 
@@ -138,7 +136,7 @@ It verifies the freeze and both calibration sets, generates and validates main i
 
 The [`internvl35_main_kaggle.ipynb`](notebooks/internvl35_main_kaggle.ipynb) notebook was used for InternVL collection after Qwen completed. For a separate inference replication, import it into a new Kaggle notebook and attach the appropriate verified backup as a private Dataset. It restores both calibrations and the main inputs, verifies the freeze and original images, and collects only missing InternVL responses in batches of at most 100. Completed Qwen responses are reused unchanged. Use **Save Version > Save & Run All** for a background run and download its saved-version output; an exported ZIP on an interactive runtime's temporary disk is not a durable backup.
 
-Both main collections have now finished. The [combined results](MAIN_RESULTS.md) documents the audit and score-only reproduction commands. Existing matching caches must be reused; no further inference is required. Publication of the reviewed reproduction artifact is pending.
+Both main collections have now finished. The [combined results](MAIN_RESULTS.md) documents the audit and score-only reproduction commands. Existing matching caches must be reused; no further inference is required. The results release contains the reviewed reproduction artifact.
 
 ## Check locally
 
@@ -192,4 +190,4 @@ Reviewed private archive SHA-256 checksums:
 - Both Qwen pilots: `f40e0ce44178ef39fb1a87e7ff155d975c31ff270b0ca9ace74ab4390829726b`.
 - InternVL smoke plus preserved Qwen data: `25ca9faf910ad1b6cd537dc2ead0993509cc4cf996c111c0fa963e5a76ecb71b`.
 
-Raw responses and generated data remain outside Git history. Historical v1 archives have not been released, so their checksums alone do not reproduce those historical results. The v2 calibration release is available; the reviewed main reproduction artifact is prepared and awaits publication. The project uses clean synthetic images and exact-match scoring; these outputs do not identify a model's internal failure mechanism.
+Raw responses and generated data remain outside Git history. Historical v1 archives have not been released, so their checksums alone do not reproduce those historical results. The v2 calibration and main releases include reviewed reproduction artifacts alongside the frozen code, scores, figures, and report. The project uses clean synthetic images and exact-match scoring; these outputs do not identify a model's internal failure mechanism.

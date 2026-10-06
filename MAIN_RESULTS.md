@@ -1,6 +1,6 @@
 # VisDSR main study results
 
-Audited on 6 October 2026. Both model collections and the combined analysis are complete. The audited reproduction artifact is prepared; its public upload awaits explicit owner approval. The intended release tag is `v2.0-results`.
+Audited on 6 October 2026. Both model collections and the combined analysis are complete. The [main-results release](https://github.com/Abhishekgit01/VisDSR/releases/tag/v2.0-results) supplies the audited reproduction artifact.
 
 ## Study and collection
 
@@ -117,4 +117,4 @@ The frozen analysis writes `summary_main_model1_model2.csv`, `comparisons_main_m
 
 ## Release and completion
 
-The prepared release package contains the byte-identical final export as `visdsr-main-results.zip`, its audit as `visdsr-main-verification.json`, the combined tables and figure, and asset checksums. Automatic approval review blocked the public upload until the owner explicitly approves that payload. The earlier calibration release remains available separately. Main collection, raw-response verification, combined analysis, and the results report are complete; public availability of the main reproduction artifact is still pending. The low-accuracy outcome is retained without further prompt selection or content retries.
+The [results release](https://github.com/Abhishekgit01/VisDSR/releases/tag/v2.0-results) packages the byte-identical final export as `visdsr-main-results.zip`, its audit as `visdsr-main-verification.json`, the combined tables and figure, and asset checksums. The earlier calibration release remains available separately. Main collection, raw-response verification, combined analysis, and the results report are complete. The low-accuracy outcome is retained without further prompt selection or content retries.
