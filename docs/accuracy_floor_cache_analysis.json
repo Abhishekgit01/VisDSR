@@ -1,0 +1,58 @@
+{
+  "status": "post-hoc diagnostic analysis; official scores unchanged",
+  "date": "2026-10-07",
+  "study_release": "https://github.com/Abhishekgit01/VisDSR/releases/tag/v2.0-results",
+  "main_tasks": 80,
+  "method": {
+    "validity": "Frozen eval.validate.parse; the existing full JSON code-fence allowance is retained.",
+    "final_correct": "Exact equality of the parsed final state and the simulator final state.",
+    "unchanged_final": "Parsed final state equals the complete initial map; invalid responses are excluded.",
+    "parent_accuracy": "Fraction of final parent entries correct within each response, then mean across 400 responses; invalid responses contribute zero.",
+    "changed_parent_accuracy": "Restrict to labels whose true final parent differs from its initial parent; average the fraction correct per response across 400 responses; invalid responses contribute zero.",
+    "initial_copy_baseline": "Return the unchanged initial map on every task; average per-parent accuracy across the same 400 task-condition pairs.",
+    "unit": "Descriptive only: five presentations share each of 80 tasks; 400 responses are not 400 independent forests.",
+    "official_rows_checked": "Every raw response was matched by task ID and condition to its official score row; format_error and final_correct agree for all 800."
+  },
+  "models": {
+    "model1": {
+      "responses": 400,
+      "cap_hits": 62,
+      "valid_responses": 262,
+      "final_correct": 3,
+      "final_unchanged_from_initial": 114,
+      "invalid_json": 103,
+      "invalid_with_cap": 62,
+      "schema_mismatch": 35,
+      "conditional_final_accuracy": 0.011450381679389313,
+      "mean_final_parent_accuracy_invalid_zero": 0.38421875,
+      "mean_changed_parent_accuracy_invalid_zero": 0.03375,
+      "initial_copy_parent_accuracy_baseline": 0.79375,
+      "initial_copy_final_exact_match": 0
+    },
+    "model2": {
+      "responses": 400,
+      "cap_hits": 41,
+      "valid_responses": 119,
+      "final_correct": 4,
+      "final_unchanged_from_initial": 70,
+      "invalid_json": 43,
+      "invalid_with_cap": 41,
+      "schema_mismatch": 238,
+      "conditional_final_accuracy": 0.03361344537815126,
+      "mean_final_parent_accuracy_invalid_zero": 0.23328125,
+      "mean_changed_parent_accuracy_invalid_zero": 0.02883333333333333,
+      "initial_copy_parent_accuracy_baseline": 0.79375,
+      "initial_copy_final_exact_match": 0
+    }
+  },
+  "source_hashes": {
+    "results/raw/main_model1.jsonl": "dd71dd747d22d655f59eb756b5f2ad2350e8e7088c2cf7c715f9d396499d8e1d",
+    "results/scores_model1.csv": "1ae728566050a5fd4501f7c251a84709eb738906eca3ff23e6cae856c08ef37c",
+    "results/raw/main_model2.jsonl": "fa4f79a4385765bd78676ba5eec34593dc013e890a146ec33e2ae598c90c1b66",
+    "results/scores_model2.csv": "0b05a79b5c4e81ff97ab800eefe2a2221d66893647da3dc06fd48efdf594a506",
+    "data/main/tasks.jsonl": "59814ee150757ff77a944de13c9630cf317c99cf4df9c519ee46e9fb2280ccf4",
+    "results/diagnostics/model1/summary.json": "8fa5d808b5b0193f2f88d6b885769760080d099a8b72ea3858a1503514ddbf7b",
+    "eval/validate.py": "f38bc41f64bcbce24d8ecf71043a54253e92ed9663064761d87c59bd895ba095",
+    "eval/score.py": "ebfea23d40605c2a0f100083a682c213a7763d5ae905dc1e984b260b2fdae01c"
+  }
+}
