@@ -72,6 +72,10 @@ All seven main successes occurred on one-operation tasks. There were no correct 
 
 Frequent schema failures, the fixed output cap, and the low text baseline constrain interpretation. No answer was repaired, stripped of a preamble, retried for content, or omitted to improve these estimates. This study does not establish unrestricted DSU ability, human diagram comprehension, or a model's internal failure mechanism.
 
+## Scored response examples
+
+[Three annotated responses](RESPONSE_EXAMPLES.md) use the same one-operation main task to show a correct answer, a valid response that omits a path-compression update, and valid JSON that fails the required response schema. Each complete response is traceable to the released cache, raw JSONL line, and score row. These examples were selected after collection for explanation; they do not supply frequency estimates or additional comparisons.
+
 ## Recovery and verification
 
 The completed outputs were recovered from Kaggle's saved-version files after the interactive runtime stopped. The final archive was `visdsr_v2_results (8).zip`, containing 1,140 payload files plus its export marker. A descriptive backup, `visdsr_v2_main_complete.zip`, preserves the exact same bytes.

@@ -20,6 +20,8 @@ Both main runs are complete and audited: **400 Qwen + 400 InternVL responses**, 
 
 Qwen has 3/400 correct final maps and 138 format failures; InternVL has 4/400 and 281. Raw responses were scored without repairs or retries. The primary T-dir minus G-dir differences are 0.00 and 2.50 percentage points, respectively; both Holm-adjusted exact p-values are 1.00. Low accuracy and frequent schema failures limit interpretation and do not establish modality equivalence. The [combined main results and verification](MAIN_RESULTS.md) records the paired analysis, output caps, recovery audit, and reproduction limits. The [main-results release](https://github.com/Abhishekgit01/VisDSR/releases/tag/v2.0-results) includes the original inputs and all raw responses; [reproduce the scores without a GPU](REPRODUCE_MAIN.md).
 
+The [three scored response examples](RESPONSE_EXAMPLES.md) show the original answers, expected state, and scoring decisions for a success, a path-compression error, and a schema failure on one shared task.
+
 The separate calibration results are:
 
 | Model | Calibration responses | Correct final maps | Format failures |
