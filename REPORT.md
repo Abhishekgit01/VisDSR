@@ -1,5 +1,7 @@
 # VisDSR: pilot and feasibility report
 
+This is the historical **v1** report. Its stop decision and private-data limitations describe that protocol. The separate v2 study is complete; see the [current main results](MAIN_RESULTS.md).
+
 **Result.** VisDSR built and tested a reproducible DSU reasoning pipeline, but the calibration runs did not support the planned comparison of text and diagrams. The two Qwen pilots had a near-zero text baseline. In a separate three-call InternVL3.5 smoke test, both image responses failed the required JSON format. No main study was run.
 
 ## Question and design
@@ -34,6 +36,6 @@ The protocol was **not frozen**. The fresh 80-task main set was not generated, a
 
 ## Reproducibility and limits
 
-The repository contains the simulator, seeded generator, renderer, evaluator, scorer, analysis code, tests, configuration, and Kaggle notebooks. `make test`, `make lint`, and `make stress` check the code; [`README.md`](README.md) lists the data-generation commands. The saved pilot archives were audited against the raw responses and current strict scorer. Their SHA-256 checksums and the InternVL archive checksum are in the README. Raw model responses and generated images remain private, so the public repository alone cannot independently reproduce the numerical results.
+The repository contains the simulator, seeded generator, renderer, evaluator, scorer, analysis code, tests, configuration, and Kaggle notebooks. `make test`, `make lint`, and `make stress` check the code. The saved v1 pilot archives were audited against their raw responses and strict scorer. Their SHA-256 checksums and the InternVL archive checksum are in the [historical documentation index](docs/README.md#historical-v1-feasibility-study). The v1 raw responses and generated images remain private, so the public repository alone cannot independently reproduce these historical numerical results. Current task-generation commands are in the [v2 inference guide](docs/INFERENCE.md).
 
 The runs used synthetic, clean diagrams, one fixed prompt family, two 8B model families with 4-bit quantization, and exact-match scoring. Invalid output does not reveal the model's internal failure mechanism. The small calibration sets and the one-task InternVL check should not be treated as confirmatory evidence. Implementation provenance, including AI-assisted work, is recorded in [`STUDENT_UNDERSTANDING.md`](STUDENT_UNDERSTANDING.md).

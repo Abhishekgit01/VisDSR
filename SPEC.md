@@ -1,6 +1,6 @@
 # DSU experiment protocol (v1)
 
-This is the historical protocol used for the results in `REPORT.md`. The separate, unfrozen v2 study is specified in [`STUDY_V2.md`](STUDY_V2.md); its prompts and calibration tasks are different.
+This is the historical **v1** protocol used for the results in [REPORT.md](REPORT.md). The separate v2 study is complete; see its [preserved plan](STUDY_V2.md) and [main results](MAIN_RESULTS.md). Its prompts and calibration tasks are different. Status statements below refer to v1.
 
 **Status:** Qwen calibration stopped after the planned two pilots. The shorter second pilot scored T-dir 1/12, R-dir 0/12, and G-dir 0/12 on final-state exact match. The separate three-call InternVL3.5 smoke test on one existing task scored T-dir 1/1, R-dir 0/1, and G-dir 0/1 under the unchanged strict scorer; both image responses had format errors. The protocol remains unfrozen, and no full InternVL pilot or main run has occurred.
 

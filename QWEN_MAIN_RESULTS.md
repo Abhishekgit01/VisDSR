@@ -1,6 +1,6 @@
 # Qwen main results
 
-Reviewed on 5 October 2026. Qwen collection is complete; the two-model study remains in progress.
+Historical collection review from 5 October 2026, when Qwen was complete and InternVL was still in progress. Both models and the combined audit are now complete; see the [current main results](MAIN_RESULTS.md).
 
 ## Collection
 
@@ -36,7 +36,7 @@ The reviewed archive was `visdsr_v2_results (10).zip`, with SHA-256:
 144f7023e48311b81e64d56fc57280ed3c2830ae9d37cdfe078fe8705d21bfde
 ```
 
-`visdsr_qwen_main_complete.zip` is a descriptive copy of that archive with identical bytes. It has not been published as a reproduction release yet.
+`visdsr_qwen_main_complete.zip` is a descriptive copy of that archive with identical bytes. This intermediate archive remains private; the [combined results release](https://github.com/Abhishekgit01/VisDSR/releases/tag/v2.0-results) includes all Qwen responses alongside the completed InternVL collection.
 
 The audit checked:
 

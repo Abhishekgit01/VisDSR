@@ -1,5 +1,7 @@
 # VisDSR v2 smoke review
 
+This is a dated smoke, diagnostic, and calibration log. The main study is now complete; see the [combined results](MAIN_RESULTS.md). Recovery snippets below use the current `main` branch; their surrounding progress reports describe earlier stages.
+
 ## Qwen: 3 October 2026
 
 The three-call smoke completed on the same 8-element, four-operation task (`pilot2_0004`). All responses passed the existing output validator; none had the correct final map or a fully correct step. This establishes that the runner loads, generates, and caches responses. It does not establish adequate task accuracy or image understanding.
@@ -62,12 +64,12 @@ repo = "https://github.com/Abhishekgit01/VisDSR.git"
 
 if (root / ".git").exists():
     subprocess.run(["git", "-C", str(root), "pull", "--ff-only",
-                    "origin", "study-v2"], check=True)
+                    "origin", "main"], check=True)
 elif not root.exists() or not any(root.iterdir()):
     subprocess.run(["git", "clone", "--depth", "1", "--branch",
-                    "study-v2", repo, str(root)], check=True)
+                    "main", repo, str(root)], check=True)
 elif not (root / "notebooks/kaggle_diagnostics.py").exists():
-    raise RuntimeError("This project copy has no Git checkout; use the current study-v2 project")
+    raise RuntimeError("This project copy has no Git checkout; use the current main project")
 
 subprocess.run([sys.executable, str(root / "notebooks/kaggle_diagnostics.py"),
                 "--model", "model1"], check=True)
@@ -186,12 +188,12 @@ repo = "https://github.com/Abhishekgit01/VisDSR.git"
 
 if (root / ".git").exists():
     subprocess.run(["git", "-C", str(root), "pull", "--ff-only",
-                    "origin", "study-v2"], check=True)
+                    "origin", "main"], check=True)
 elif not root.exists() or not any(root.iterdir()):
     subprocess.run(["git", "clone", "--depth", "1", "--branch",
-                    "study-v2", repo, str(root)], check=True)
+                    "main", repo, str(root)], check=True)
 elif not (root / "notebooks/kaggle_diagnostics.py").exists():
-    raise RuntimeError("Use the current study-v2 project files")
+    raise RuntimeError("Use the current main project files")
 
 subprocess.run(
     [sys.executable, str(root / "notebooks/kaggle_diagnostics.py"),
