@@ -1,0 +1,17 @@
+{
+  "reviewer": "Codex visual inspection; not a human readability study",
+  "date": "2026-10-07",
+  "task_ids": [
+    "diag_0001",
+    "diag_0003",
+    "diag_0005",
+    "diag_0007"
+  ],
+  "reviewed_inputs_sha256": "7c2b23553930c8ee9cab89c3a243c06653d0b33aa97b6bc50cec4540b7a3e50a",
+  "checks": [
+    "Read each reviewed rendered parent map against its canonical initial state.",
+    "Checked every diagram label and child-to-parent arrow against the initial map.",
+    "Checked self-parented roots have no outgoing arrows and labels are not clipped.",
+    "Reviewed operations and simulator/reference agreement in each difficulty cell."
+  ]
+}

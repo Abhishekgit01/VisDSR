@@ -17,7 +17,9 @@ The current study is complete. Planning documents and earlier collection logs re
 
 ## Proposed future work
 
-[Reading, DSU updates, and response format](FOLLOW_UP.md) proposes six matched diagnostic requests, a fixed eight-forest pilot for both checkpoints, and a gate before a separate held-out confirmation study. It is a proposal, not an implemented or completed experiment.
+[Reading, DSU updates, and response format](FOLLOW_UP.md) records the 6 October proposal for six matched diagnostic requests and a fixed eight-forest pilot. The [diagnostic implementation and Kaggle guide](DIAGNOSTICS.md) are ready; model collection is pending. The gate precedes any separate held-out confirmation study.
+
+[Accuracy-floor research review](ACCURACY_FLOOR_RESEARCH.md) combines a dated exploratory audit of all 800 main responses with primary literature and official model documentation. It prioritizes controlled interventions and gives bounded call counts; none of the proposed interventions has been evaluated.
 
 ## Preserved v2 planning and calibration
 

@@ -101,6 +101,12 @@ The [reproduction guide](REPRODUCE_MAIN.md) includes dependency installation, do
 
 Official collection is complete. The [Kaggle and inference guide](docs/INFERENCE.md) explains the retained notebooks, bounded runner, cache reuse, and durable backups. Re-running weights is a separate hardware-dependent replication; use cached scoring above to reproduce the published results.
 
+## Diagnostic follow-up
+
+A separate **96-request diagnostic pilot** is prepared to test initial-state extraction, DSU updates, and response compliance on eight fresh forests. It uses the same pinned checkpoints and difficulty groups, with isolated caches and backups after every new response. Model collection is pending.
+
+The [diagnostic guide and Kaggle notebook](docs/DIAGNOSTICS.md) provide the exact protocol, one overnight run for both models, recovery steps, and decision gate. The [research review](docs/ACCURACY_FLOOR_RESEARCH.md) connects the completed response audit to primary literature and possible later interventions.
+
 ## Check locally
 
 Requires Python 3.11+, a C++17 compiler, Graphviz, and DejaVu fonts.
@@ -122,6 +128,7 @@ make stress
 | [`eval/`](eval/) | Shared prompts, local inference, caching, and strict scoring |
 | [`analysis/`](analysis/) | Paired statistics and figures |
 | [`study_transfer.py`](study_transfer.py) | Checked v2 backup export and restore |
+| [`diagnostics/`](diagnostics/) | Separate frozen diagnostic inputs, bounded collection, scoring, and recovery |
 | [`tests/`](tests/) | Independent DSU reference and infrastructure checks |
 | [Algorithm explanation and implementation provenance](STUDENT_UNDERSTANDING.md) | DSU rules, condition controls, and AI-assisted work |
 
@@ -129,9 +136,9 @@ make stress
 
 The [documentation index](docs/README.md) separates the completed study from the preserved planning documents, calibration logs, and historical v1 feasibility results. Historical responses are not pooled with v2.
 
-The [follow-up research proposal](docs/FOLLOW_UP.md) sets out matched controls for initial-state extraction, DSU updates, and response formatting, with a fixed diagnostic pilot and criteria for proceeding. It is proposed future work; no follow-up results have been collected.
+The [6 October follow-up proposal](docs/FOLLOW_UP.md) is retained as a dated planning record. Its diagnostic pilot now has a validated implementation; no follow-up model results have been collected. Intervention experiments and held-out confirmation remain future work.
 
-Complete generated datasets and raw-response archives are distributed as release assets. Small reviewed examples are included in the repository documentation.
+Completed datasets and raw-response archives are distributed as release assets. Small reviewed examples and the fixed diagnostic input panel are included in the repository.
 
 ## License and citation
 

@@ -1,0 +1,434 @@
+[
+  {
+    "case_id": "diag_0003__extract_text",
+    "task_id": "diag_0003",
+    "control": "extract_text",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: {\"A\":\"H\",\"B\":\"B\",\"C\":\"C\",\"D\":\"B\",\"E\":\"H\",\"F\":\"E\",\"G\":\"C\",\"H\":\"H\"}\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0005__update_text",
+    "task_id": "diag_0005",
+    "control": "update_text",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. find(x) follows parents to a root, fully compresses the traversed path, and returns the root.\nunion(a,b) first runs find(a) and find(b), including their path compression. A set's size counts all elements whose root is that set's root, not just direct children. If roots differ, attach the smaller set's root under the larger set's root. If sizes tie, attach b's root under a's root. If roots are equal, do not merge.\nThe initial state is a parent map. In a diagram, each arrow points from child to parent; roots have no outgoing arrow.\nWorked examples below are separate from this task; do not copy their states into your answer.\nExample 1: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"C\",\"D\":\"C\"}; union(B,D) finds roots A and C, each of size 2, so C attaches under A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}}.\nExample 2: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}; find(D) returns A and changes the parent of D to A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"},\"find_result\":\"A\"}.\nInitial state: {\"A\":\"A\",\"B\":\"B\",\"C\":\"C\",\"D\":\"B\",\"E\":\"G\",\"F\":\"F\",\"G\":\"C\",\"H\":\"F\",\"I\":\"C\",\"J\":\"K\",\"K\":\"B\",\"L\":\"A\",\"M\":\"A\",\"N\":\"F\",\"O\":\"M\",\"P\":\"N\"}\nOperations:\n1. union(L,B)\nReturn a JSON object with steps.\nsteps must be an array with one object per operation in order. Each object has op (1-based operation number) and state (the full parent map after that operation). For find operations only, include find_result (the returned root label).\nUse every label exactly once as a state key. Start your response with { and end it with }. Return no prose, reasoning text, tags, or Markdown."
+  },
+  {
+    "case_id": "diag_0006__extract_diagram",
+    "task_id": "diag_0006",
+    "control": "extract_diagram",
+    "condition": "G-dir",
+    "image": "img_00012.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: see the attached PNG.\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0006__update_text",
+    "task_id": "diag_0006",
+    "control": "update_text",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. find(x) follows parents to a root, fully compresses the traversed path, and returns the root.\nunion(a,b) first runs find(a) and find(b), including their path compression. A set's size counts all elements whose root is that set's root, not just direct children. If roots differ, attach the smaller set's root under the larger set's root. If sizes tie, attach b's root under a's root. If roots are equal, do not merge.\nThe initial state is a parent map. In a diagram, each arrow points from child to parent; roots have no outgoing arrow.\nWorked examples below are separate from this task; do not copy their states into your answer.\nExample 1: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"C\",\"D\":\"C\"}; union(B,D) finds roots A and C, each of size 2, so C attaches under A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}}.\nExample 2: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}; find(D) returns A and changes the parent of D to A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"},\"find_result\":\"A\"}.\nInitial state: {\"A\":\"A\",\"B\":\"B\",\"C\":\"B\",\"D\":\"I\",\"E\":\"E\",\"F\":\"P\",\"G\":\"P\",\"H\":\"K\",\"I\":\"I\",\"J\":\"O\",\"K\":\"I\",\"L\":\"F\",\"M\":\"E\",\"N\":\"A\",\"O\":\"O\",\"P\":\"P\"}\nOperations:\n1. find(L)\nReturn a JSON object with steps.\nsteps must be an array with one object per operation in order. Each object has op (1-based operation number) and state (the full parent map after that operation). For find operations only, include find_result (the returned root label).\nUse every label exactly once as a state key. Start your response with { and end it with }. Return no prose, reasoning text, tags, or Markdown."
+  },
+  {
+    "case_id": "diag_0003__extract_rendered",
+    "task_id": "diag_0003",
+    "control": "extract_rendered",
+    "condition": "R-dir",
+    "image": "img_00005.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: see the attached PNG.\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0001__extract_text",
+    "task_id": "diag_0001",
+    "control": "extract_text",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: {\"A\":\"H\",\"B\":\"G\",\"C\":\"C\",\"D\":\"C\",\"E\":\"A\",\"F\":\"H\",\"G\":\"C\",\"H\":\"H\"}\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0005__copy_solution",
+    "task_id": "diag_0005",
+    "control": "copy_solution",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nThe following is the simulator-supplied correct solution. Copy this JSON object exactly; no calculation is needed. Preserve every step, label, parent, and find result. Return no other fields, prose, or Markdown.\nSolution to copy: {\"steps\":[{\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"C\",\"D\":\"B\",\"E\":\"G\",\"F\":\"F\",\"G\":\"C\",\"H\":\"F\",\"I\":\"C\",\"J\":\"K\",\"K\":\"B\",\"L\":\"A\",\"M\":\"A\",\"N\":\"F\",\"O\":\"M\",\"P\":\"N\"}}]}"
+  },
+  {
+    "case_id": "diag_0001__update_diagram",
+    "task_id": "diag_0001",
+    "control": "update_diagram",
+    "condition": "G-dir",
+    "image": "img_00002.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. find(x) follows parents to a root, fully compresses the traversed path, and returns the root.\nunion(a,b) first runs find(a) and find(b), including their path compression. A set's size counts all elements whose root is that set's root, not just direct children. If roots differ, attach the smaller set's root under the larger set's root. If sizes tie, attach b's root under a's root. If roots are equal, do not merge.\nThe initial state is a parent map. In a diagram, each arrow points from child to parent; roots have no outgoing arrow.\nWorked examples below are separate from this task; do not copy their states into your answer.\nExample 1: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"C\",\"D\":\"C\"}; union(B,D) finds roots A and C, each of size 2, so C attaches under A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}}.\nExample 2: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}; find(D) returns A and changes the parent of D to A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"},\"find_result\":\"A\"}.\nInitial state: see the attached PNG.\nOperations:\n1. union(E,C)\nReturn a JSON object with steps.\nsteps must be an array with one object per operation in order. Each object has op (1-based operation number) and state (the full parent map after that operation). For find operations only, include find_result (the returned root label).\nUse every label exactly once as a state key. Start your response with { and end it with }. Return no prose, reasoning text, tags, or Markdown."
+  },
+  {
+    "case_id": "diag_0006__extract_rendered",
+    "task_id": "diag_0006",
+    "control": "extract_rendered",
+    "condition": "R-dir",
+    "image": "img_00011.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: see the attached PNG.\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0002__copy_solution",
+    "task_id": "diag_0002",
+    "control": "copy_solution",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nThe following is the simulator-supplied correct solution. Copy this JSON object exactly; no calculation is needed. Preserve every step, label, parent, and find result. Return no other fields, prose, or Markdown.\nSolution to copy: {\"steps\":[{\"find_result\":\"G\",\"op\":1,\"state\":{\"A\":\"C\",\"B\":\"G\",\"C\":\"C\",\"D\":\"E\",\"E\":\"C\",\"F\":\"G\",\"G\":\"G\",\"H\":\"G\"}}]}"
+  },
+  {
+    "case_id": "diag_0004__copy_solution",
+    "task_id": "diag_0004",
+    "control": "copy_solution",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nThe following is the simulator-supplied correct solution. Copy this JSON object exactly; no calculation is needed. Preserve every step, label, parent, and find result. Return no other fields, prose, or Markdown.\nSolution to copy: {\"steps\":[{\"find_result\":\"C\",\"op\":1,\"state\":{\"A\":\"D\",\"B\":\"C\",\"C\":\"C\",\"D\":\"D\",\"E\":\"G\",\"F\":\"C\",\"G\":\"D\",\"H\":\"C\"}},{\"op\":2,\"state\":{\"A\":\"D\",\"B\":\"C\",\"C\":\"D\",\"D\":\"D\",\"E\":\"D\",\"F\":\"C\",\"G\":\"D\",\"H\":\"C\"}},{\"find_result\":\"D\",\"op\":3,\"state\":{\"A\":\"D\",\"B\":\"C\",\"C\":\"D\",\"D\":\"D\",\"E\":\"D\",\"F\":\"C\",\"G\":\"D\",\"H\":\"C\"}},{\"op\":4,\"state\":{\"A\":\"D\",\"B\":\"C\",\"C\":\"D\",\"D\":\"D\",\"E\":\"D\",\"F\":\"C\",\"G\":\"D\",\"H\":\"C\"}}]}"
+  },
+  {
+    "case_id": "diag_0008__update_text",
+    "task_id": "diag_0008",
+    "control": "update_text",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. find(x) follows parents to a root, fully compresses the traversed path, and returns the root.\nunion(a,b) first runs find(a) and find(b), including their path compression. A set's size counts all elements whose root is that set's root, not just direct children. If roots differ, attach the smaller set's root under the larger set's root. If sizes tie, attach b's root under a's root. If roots are equal, do not merge.\nThe initial state is a parent map. In a diagram, each arrow points from child to parent; roots have no outgoing arrow.\nWorked examples below are separate from this task; do not copy their states into your answer.\nExample 1: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"C\",\"D\":\"C\"}; union(B,D) finds roots A and C, each of size 2, so C attaches under A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}}.\nExample 2: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}; find(D) returns A and changes the parent of D to A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"},\"find_result\":\"A\"}.\nInitial state: {\"A\":\"O\",\"B\":\"B\",\"C\":\"C\",\"D\":\"G\",\"E\":\"I\",\"F\":\"M\",\"G\":\"C\",\"H\":\"O\",\"I\":\"I\",\"J\":\"I\",\"K\":\"J\",\"L\":\"A\",\"M\":\"M\",\"N\":\"C\",\"O\":\"O\",\"P\":\"B\"}\nOperations:\n1. find(L)\n2. union(L,K)\n3. union(L,I)\n4. find(C)\nReturn a JSON object with steps.\nsteps must be an array with one object per operation in order. Each object has op (1-based operation number) and state (the full parent map after that operation). For find operations only, include find_result (the returned root label).\nUse every label exactly once as a state key. Start your response with { and end it with }. Return no prose, reasoning text, tags, or Markdown."
+  },
+  {
+    "case_id": "diag_0008__update_diagram",
+    "task_id": "diag_0008",
+    "control": "update_diagram",
+    "condition": "G-dir",
+    "image": "img_00016.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. find(x) follows parents to a root, fully compresses the traversed path, and returns the root.\nunion(a,b) first runs find(a) and find(b), including their path compression. A set's size counts all elements whose root is that set's root, not just direct children. If roots differ, attach the smaller set's root under the larger set's root. If sizes tie, attach b's root under a's root. If roots are equal, do not merge.\nThe initial state is a parent map. In a diagram, each arrow points from child to parent; roots have no outgoing arrow.\nWorked examples below are separate from this task; do not copy their states into your answer.\nExample 1: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"C\",\"D\":\"C\"}; union(B,D) finds roots A and C, each of size 2, so C attaches under A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}}.\nExample 2: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}; find(D) returns A and changes the parent of D to A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"},\"find_result\":\"A\"}.\nInitial state: see the attached PNG.\nOperations:\n1. find(L)\n2. union(L,K)\n3. union(L,I)\n4. find(C)\nReturn a JSON object with steps.\nsteps must be an array with one object per operation in order. Each object has op (1-based operation number) and state (the full parent map after that operation). For find operations only, include find_result (the returned root label).\nUse every label exactly once as a state key. Start your response with { and end it with }. Return no prose, reasoning text, tags, or Markdown."
+  },
+  {
+    "case_id": "diag_0006__extract_text",
+    "task_id": "diag_0006",
+    "control": "extract_text",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: {\"A\":\"A\",\"B\":\"B\",\"C\":\"B\",\"D\":\"I\",\"E\":\"E\",\"F\":\"P\",\"G\":\"P\",\"H\":\"K\",\"I\":\"I\",\"J\":\"O\",\"K\":\"I\",\"L\":\"F\",\"M\":\"E\",\"N\":\"A\",\"O\":\"O\",\"P\":\"P\"}\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0006__update_diagram",
+    "task_id": "diag_0006",
+    "control": "update_diagram",
+    "condition": "G-dir",
+    "image": "img_00012.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. find(x) follows parents to a root, fully compresses the traversed path, and returns the root.\nunion(a,b) first runs find(a) and find(b), including their path compression. A set's size counts all elements whose root is that set's root, not just direct children. If roots differ, attach the smaller set's root under the larger set's root. If sizes tie, attach b's root under a's root. If roots are equal, do not merge.\nThe initial state is a parent map. In a diagram, each arrow points from child to parent; roots have no outgoing arrow.\nWorked examples below are separate from this task; do not copy their states into your answer.\nExample 1: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"C\",\"D\":\"C\"}; union(B,D) finds roots A and C, each of size 2, so C attaches under A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}}.\nExample 2: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}; find(D) returns A and changes the parent of D to A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"},\"find_result\":\"A\"}.\nInitial state: see the attached PNG.\nOperations:\n1. find(L)\nReturn a JSON object with steps.\nsteps must be an array with one object per operation in order. Each object has op (1-based operation number) and state (the full parent map after that operation). For find operations only, include find_result (the returned root label).\nUse every label exactly once as a state key. Start your response with { and end it with }. Return no prose, reasoning text, tags, or Markdown."
+  },
+  {
+    "case_id": "diag_0001__extract_diagram",
+    "task_id": "diag_0001",
+    "control": "extract_diagram",
+    "condition": "G-dir",
+    "image": "img_00002.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: see the attached PNG.\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0007__update_diagram",
+    "task_id": "diag_0007",
+    "control": "update_diagram",
+    "condition": "G-dir",
+    "image": "img_00014.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. find(x) follows parents to a root, fully compresses the traversed path, and returns the root.\nunion(a,b) first runs find(a) and find(b), including their path compression. A set's size counts all elements whose root is that set's root, not just direct children. If roots differ, attach the smaller set's root under the larger set's root. If sizes tie, attach b's root under a's root. If roots are equal, do not merge.\nThe initial state is a parent map. In a diagram, each arrow points from child to parent; roots have no outgoing arrow.\nWorked examples below are separate from this task; do not copy their states into your answer.\nExample 1: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"C\",\"D\":\"C\"}; union(B,D) finds roots A and C, each of size 2, so C attaches under A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}}.\nExample 2: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}; find(D) returns A and changes the parent of D to A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"},\"find_result\":\"A\"}.\nInitial state: see the attached PNG.\nOperations:\n1. find(F)\n2. union(I,O)\n3. find(L)\n4. union(H,F)\nReturn a JSON object with steps.\nsteps must be an array with one object per operation in order. Each object has op (1-based operation number) and state (the full parent map after that operation). For find operations only, include find_result (the returned root label).\nUse every label exactly once as a state key. Start your response with { and end it with }. Return no prose, reasoning text, tags, or Markdown."
+  },
+  {
+    "case_id": "diag_0007__copy_solution",
+    "task_id": "diag_0007",
+    "control": "copy_solution",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nThe following is the simulator-supplied correct solution. Copy this JSON object exactly; no calculation is needed. Preserve every step, label, parent, and find result. Return no other fields, prose, or Markdown.\nSolution to copy: {\"steps\":[{\"find_result\":\"N\",\"op\":1,\"state\":{\"A\":\"N\",\"B\":\"J\",\"C\":\"N\",\"D\":\"G\",\"E\":\"D\",\"F\":\"N\",\"G\":\"G\",\"H\":\"H\",\"I\":\"G\",\"J\":\"K\",\"K\":\"K\",\"L\":\"K\",\"M\":\"P\",\"N\":\"N\",\"O\":\"H\",\"P\":\"H\"}},{\"op\":2,\"state\":{\"A\":\"N\",\"B\":\"J\",\"C\":\"N\",\"D\":\"G\",\"E\":\"D\",\"F\":\"N\",\"G\":\"G\",\"H\":\"G\",\"I\":\"G\",\"J\":\"K\",\"K\":\"K\",\"L\":\"K\",\"M\":\"P\",\"N\":\"N\",\"O\":\"H\",\"P\":\"H\"}},{\"find_result\":\"K\",\"op\":3,\"state\":{\"A\":\"N\",\"B\":\"J\",\"C\":\"N\",\"D\":\"G\",\"E\":\"D\",\"F\":\"N\",\"G\":\"G\",\"H\":\"G\",\"I\":\"G\",\"J\":\"K\",\"K\":\"K\",\"L\":\"K\",\"M\":\"P\",\"N\":\"N\",\"O\":\"H\",\"P\":\"H\"}},{\"op\":4,\"state\":{\"A\":\"N\",\"B\":\"J\",\"C\":\"N\",\"D\":\"G\",\"E\":\"D\",\"F\":\"N\",\"G\":\"G\",\"H\":\"G\",\"I\":\"G\",\"J\":\"K\",\"K\":\"K\",\"L\":\"K\",\"M\":\"P\",\"N\":\"G\",\"O\":\"H\",\"P\":\"H\"}}]}"
+  },
+  {
+    "case_id": "diag_0003__copy_solution",
+    "task_id": "diag_0003",
+    "control": "copy_solution",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nThe following is the simulator-supplied correct solution. Copy this JSON object exactly; no calculation is needed. Preserve every step, label, parent, and find result. Return no other fields, prose, or Markdown.\nSolution to copy: {\"steps\":[{\"find_result\":\"H\",\"op\":1,\"state\":{\"A\":\"H\",\"B\":\"B\",\"C\":\"C\",\"D\":\"B\",\"E\":\"H\",\"F\":\"H\",\"G\":\"C\",\"H\":\"H\"}},{\"op\":2,\"state\":{\"A\":\"H\",\"B\":\"B\",\"C\":\"B\",\"D\":\"B\",\"E\":\"H\",\"F\":\"H\",\"G\":\"C\",\"H\":\"H\"}},{\"op\":3,\"state\":{\"A\":\"H\",\"B\":\"H\",\"C\":\"B\",\"D\":\"B\",\"E\":\"H\",\"F\":\"H\",\"G\":\"C\",\"H\":\"H\"}},{\"op\":4,\"state\":{\"A\":\"H\",\"B\":\"H\",\"C\":\"B\",\"D\":\"B\",\"E\":\"H\",\"F\":\"H\",\"G\":\"C\",\"H\":\"H\"}}]}"
+  },
+  {
+    "case_id": "diag_0001__update_text",
+    "task_id": "diag_0001",
+    "control": "update_text",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. find(x) follows parents to a root, fully compresses the traversed path, and returns the root.\nunion(a,b) first runs find(a) and find(b), including their path compression. A set's size counts all elements whose root is that set's root, not just direct children. If roots differ, attach the smaller set's root under the larger set's root. If sizes tie, attach b's root under a's root. If roots are equal, do not merge.\nThe initial state is a parent map. In a diagram, each arrow points from child to parent; roots have no outgoing arrow.\nWorked examples below are separate from this task; do not copy their states into your answer.\nExample 1: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"C\",\"D\":\"C\"}; union(B,D) finds roots A and C, each of size 2, so C attaches under A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}}.\nExample 2: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}; find(D) returns A and changes the parent of D to A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"},\"find_result\":\"A\"}.\nInitial state: {\"A\":\"H\",\"B\":\"G\",\"C\":\"C\",\"D\":\"C\",\"E\":\"A\",\"F\":\"H\",\"G\":\"C\",\"H\":\"H\"}\nOperations:\n1. union(E,C)\nReturn a JSON object with steps.\nsteps must be an array with one object per operation in order. Each object has op (1-based operation number) and state (the full parent map after that operation). For find operations only, include find_result (the returned root label).\nUse every label exactly once as a state key. Start your response with { and end it with }. Return no prose, reasoning text, tags, or Markdown."
+  },
+  {
+    "case_id": "diag_0008__extract_diagram",
+    "task_id": "diag_0008",
+    "control": "extract_diagram",
+    "condition": "G-dir",
+    "image": "img_00016.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: see the attached PNG.\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0004__extract_diagram",
+    "task_id": "diag_0004",
+    "control": "extract_diagram",
+    "condition": "G-dir",
+    "image": "img_00008.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: see the attached PNG.\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0002__extract_rendered",
+    "task_id": "diag_0002",
+    "control": "extract_rendered",
+    "condition": "R-dir",
+    "image": "img_00003.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: see the attached PNG.\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0002__update_diagram",
+    "task_id": "diag_0002",
+    "control": "update_diagram",
+    "condition": "G-dir",
+    "image": "img_00004.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. find(x) follows parents to a root, fully compresses the traversed path, and returns the root.\nunion(a,b) first runs find(a) and find(b), including their path compression. A set's size counts all elements whose root is that set's root, not just direct children. If roots differ, attach the smaller set's root under the larger set's root. If sizes tie, attach b's root under a's root. If roots are equal, do not merge.\nThe initial state is a parent map. In a diagram, each arrow points from child to parent; roots have no outgoing arrow.\nWorked examples below are separate from this task; do not copy their states into your answer.\nExample 1: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"C\",\"D\":\"C\"}; union(B,D) finds roots A and C, each of size 2, so C attaches under A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}}.\nExample 2: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}; find(D) returns A and changes the parent of D to A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"},\"find_result\":\"A\"}.\nInitial state: see the attached PNG.\nOperations:\n1. find(F)\nReturn a JSON object with steps.\nsteps must be an array with one object per operation in order. Each object has op (1-based operation number) and state (the full parent map after that operation). For find operations only, include find_result (the returned root label).\nUse every label exactly once as a state key. Start your response with { and end it with }. Return no prose, reasoning text, tags, or Markdown."
+  },
+  {
+    "case_id": "diag_0002__update_text",
+    "task_id": "diag_0002",
+    "control": "update_text",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. find(x) follows parents to a root, fully compresses the traversed path, and returns the root.\nunion(a,b) first runs find(a) and find(b), including their path compression. A set's size counts all elements whose root is that set's root, not just direct children. If roots differ, attach the smaller set's root under the larger set's root. If sizes tie, attach b's root under a's root. If roots are equal, do not merge.\nThe initial state is a parent map. In a diagram, each arrow points from child to parent; roots have no outgoing arrow.\nWorked examples below are separate from this task; do not copy their states into your answer.\nExample 1: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"C\",\"D\":\"C\"}; union(B,D) finds roots A and C, each of size 2, so C attaches under A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}}.\nExample 2: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}; find(D) returns A and changes the parent of D to A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"},\"find_result\":\"A\"}.\nInitial state: {\"A\":\"C\",\"B\":\"G\",\"C\":\"C\",\"D\":\"E\",\"E\":\"C\",\"F\":\"B\",\"G\":\"G\",\"H\":\"G\"}\nOperations:\n1. find(F)\nReturn a JSON object with steps.\nsteps must be an array with one object per operation in order. Each object has op (1-based operation number) and state (the full parent map after that operation). For find operations only, include find_result (the returned root label).\nUse every label exactly once as a state key. Start your response with { and end it with }. Return no prose, reasoning text, tags, or Markdown."
+  },
+  {
+    "case_id": "diag_0005__extract_diagram",
+    "task_id": "diag_0005",
+    "control": "extract_diagram",
+    "condition": "G-dir",
+    "image": "img_00010.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: see the attached PNG.\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0001__extract_rendered",
+    "task_id": "diag_0001",
+    "control": "extract_rendered",
+    "condition": "R-dir",
+    "image": "img_00001.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: see the attached PNG.\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0007__update_text",
+    "task_id": "diag_0007",
+    "control": "update_text",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. find(x) follows parents to a root, fully compresses the traversed path, and returns the root.\nunion(a,b) first runs find(a) and find(b), including their path compression. A set's size counts all elements whose root is that set's root, not just direct children. If roots differ, attach the smaller set's root under the larger set's root. If sizes tie, attach b's root under a's root. If roots are equal, do not merge.\nThe initial state is a parent map. In a diagram, each arrow points from child to parent; roots have no outgoing arrow.\nWorked examples below are separate from this task; do not copy their states into your answer.\nExample 1: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"C\",\"D\":\"C\"}; union(B,D) finds roots A and C, each of size 2, so C attaches under A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}}.\nExample 2: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}; find(D) returns A and changes the parent of D to A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"},\"find_result\":\"A\"}.\nInitial state: {\"A\":\"N\",\"B\":\"J\",\"C\":\"N\",\"D\":\"G\",\"E\":\"D\",\"F\":\"A\",\"G\":\"G\",\"H\":\"H\",\"I\":\"G\",\"J\":\"K\",\"K\":\"K\",\"L\":\"K\",\"M\":\"P\",\"N\":\"N\",\"O\":\"H\",\"P\":\"H\"}\nOperations:\n1. find(F)\n2. union(I,O)\n3. find(L)\n4. union(H,F)\nReturn a JSON object with steps.\nsteps must be an array with one object per operation in order. Each object has op (1-based operation number) and state (the full parent map after that operation). For find operations only, include find_result (the returned root label).\nUse every label exactly once as a state key. Start your response with { and end it with }. Return no prose, reasoning text, tags, or Markdown."
+  },
+  {
+    "case_id": "diag_0008__extract_rendered",
+    "task_id": "diag_0008",
+    "control": "extract_rendered",
+    "condition": "R-dir",
+    "image": "img_00015.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: see the attached PNG.\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0005__extract_text",
+    "task_id": "diag_0005",
+    "control": "extract_text",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: {\"A\":\"A\",\"B\":\"B\",\"C\":\"C\",\"D\":\"B\",\"E\":\"G\",\"F\":\"F\",\"G\":\"C\",\"H\":\"F\",\"I\":\"C\",\"J\":\"K\",\"K\":\"B\",\"L\":\"A\",\"M\":\"A\",\"N\":\"F\",\"O\":\"M\",\"P\":\"N\"}\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0004__update_text",
+    "task_id": "diag_0004",
+    "control": "update_text",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. find(x) follows parents to a root, fully compresses the traversed path, and returns the root.\nunion(a,b) first runs find(a) and find(b), including their path compression. A set's size counts all elements whose root is that set's root, not just direct children. If roots differ, attach the smaller set's root under the larger set's root. If sizes tie, attach b's root under a's root. If roots are equal, do not merge.\nThe initial state is a parent map. In a diagram, each arrow points from child to parent; roots have no outgoing arrow.\nWorked examples below are separate from this task; do not copy their states into your answer.\nExample 1: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"C\",\"D\":\"C\"}; union(B,D) finds roots A and C, each of size 2, so C attaches under A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}}.\nExample 2: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}; find(D) returns A and changes the parent of D to A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"},\"find_result\":\"A\"}.\nInitial state: {\"A\":\"D\",\"B\":\"H\",\"C\":\"C\",\"D\":\"D\",\"E\":\"G\",\"F\":\"C\",\"G\":\"D\",\"H\":\"C\"}\nOperations:\n1. find(B)\n2. union(E,F)\n3. find(A)\n4. union(E,D)\nReturn a JSON object with steps.\nsteps must be an array with one object per operation in order. Each object has op (1-based operation number) and state (the full parent map after that operation). For find operations only, include find_result (the returned root label).\nUse every label exactly once as a state key. Start your response with { and end it with }. Return no prose, reasoning text, tags, or Markdown."
+  },
+  {
+    "case_id": "diag_0007__extract_diagram",
+    "task_id": "diag_0007",
+    "control": "extract_diagram",
+    "condition": "G-dir",
+    "image": "img_00014.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: see the attached PNG.\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0004__extract_text",
+    "task_id": "diag_0004",
+    "control": "extract_text",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: {\"A\":\"D\",\"B\":\"H\",\"C\":\"C\",\"D\":\"D\",\"E\":\"G\",\"F\":\"C\",\"G\":\"D\",\"H\":\"C\"}\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0003__update_text",
+    "task_id": "diag_0003",
+    "control": "update_text",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. find(x) follows parents to a root, fully compresses the traversed path, and returns the root.\nunion(a,b) first runs find(a) and find(b), including their path compression. A set's size counts all elements whose root is that set's root, not just direct children. If roots differ, attach the smaller set's root under the larger set's root. If sizes tie, attach b's root under a's root. If roots are equal, do not merge.\nThe initial state is a parent map. In a diagram, each arrow points from child to parent; roots have no outgoing arrow.\nWorked examples below are separate from this task; do not copy their states into your answer.\nExample 1: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"C\",\"D\":\"C\"}; union(B,D) finds roots A and C, each of size 2, so C attaches under A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}}.\nExample 2: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}; find(D) returns A and changes the parent of D to A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"},\"find_result\":\"A\"}.\nInitial state: {\"A\":\"H\",\"B\":\"B\",\"C\":\"C\",\"D\":\"B\",\"E\":\"H\",\"F\":\"E\",\"G\":\"C\",\"H\":\"H\"}\nOperations:\n1. find(F)\n2. union(B,C)\n3. union(F,D)\n4. union(A,H)\nReturn a JSON object with steps.\nsteps must be an array with one object per operation in order. Each object has op (1-based operation number) and state (the full parent map after that operation). For find operations only, include find_result (the returned root label).\nUse every label exactly once as a state key. Start your response with { and end it with }. Return no prose, reasoning text, tags, or Markdown."
+  },
+  {
+    "case_id": "diag_0002__extract_diagram",
+    "task_id": "diag_0002",
+    "control": "extract_diagram",
+    "condition": "G-dir",
+    "image": "img_00004.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: see the attached PNG.\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0003__extract_diagram",
+    "task_id": "diag_0003",
+    "control": "extract_diagram",
+    "condition": "G-dir",
+    "image": "img_00006.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: see the attached PNG.\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0007__extract_rendered",
+    "task_id": "diag_0007",
+    "control": "extract_rendered",
+    "condition": "R-dir",
+    "image": "img_00013.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: see the attached PNG.\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0008__copy_solution",
+    "task_id": "diag_0008",
+    "control": "copy_solution",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nThe following is the simulator-supplied correct solution. Copy this JSON object exactly; no calculation is needed. Preserve every step, label, parent, and find result. Return no other fields, prose, or Markdown.\nSolution to copy: {\"steps\":[{\"find_result\":\"O\",\"op\":1,\"state\":{\"A\":\"O\",\"B\":\"B\",\"C\":\"C\",\"D\":\"G\",\"E\":\"I\",\"F\":\"M\",\"G\":\"C\",\"H\":\"O\",\"I\":\"I\",\"J\":\"I\",\"K\":\"J\",\"L\":\"O\",\"M\":\"M\",\"N\":\"C\",\"O\":\"O\",\"P\":\"B\"}},{\"op\":2,\"state\":{\"A\":\"O\",\"B\":\"B\",\"C\":\"C\",\"D\":\"G\",\"E\":\"I\",\"F\":\"M\",\"G\":\"C\",\"H\":\"O\",\"I\":\"O\",\"J\":\"I\",\"K\":\"I\",\"L\":\"O\",\"M\":\"M\",\"N\":\"C\",\"O\":\"O\",\"P\":\"B\"}},{\"op\":3,\"state\":{\"A\":\"O\",\"B\":\"B\",\"C\":\"C\",\"D\":\"G\",\"E\":\"I\",\"F\":\"M\",\"G\":\"C\",\"H\":\"O\",\"I\":\"O\",\"J\":\"I\",\"K\":\"I\",\"L\":\"O\",\"M\":\"M\",\"N\":\"C\",\"O\":\"O\",\"P\":\"B\"}},{\"find_result\":\"C\",\"op\":4,\"state\":{\"A\":\"O\",\"B\":\"B\",\"C\":\"C\",\"D\":\"G\",\"E\":\"I\",\"F\":\"M\",\"G\":\"C\",\"H\":\"O\",\"I\":\"O\",\"J\":\"I\",\"K\":\"I\",\"L\":\"O\",\"M\":\"M\",\"N\":\"C\",\"O\":\"O\",\"P\":\"B\"}}]}"
+  },
+  {
+    "case_id": "diag_0004__update_diagram",
+    "task_id": "diag_0004",
+    "control": "update_diagram",
+    "condition": "G-dir",
+    "image": "img_00008.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. find(x) follows parents to a root, fully compresses the traversed path, and returns the root.\nunion(a,b) first runs find(a) and find(b), including their path compression. A set's size counts all elements whose root is that set's root, not just direct children. If roots differ, attach the smaller set's root under the larger set's root. If sizes tie, attach b's root under a's root. If roots are equal, do not merge.\nThe initial state is a parent map. In a diagram, each arrow points from child to parent; roots have no outgoing arrow.\nWorked examples below are separate from this task; do not copy their states into your answer.\nExample 1: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"C\",\"D\":\"C\"}; union(B,D) finds roots A and C, each of size 2, so C attaches under A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}}.\nExample 2: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}; find(D) returns A and changes the parent of D to A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"},\"find_result\":\"A\"}.\nInitial state: see the attached PNG.\nOperations:\n1. find(B)\n2. union(E,F)\n3. find(A)\n4. union(E,D)\nReturn a JSON object with steps.\nsteps must be an array with one object per operation in order. Each object has op (1-based operation number) and state (the full parent map after that operation). For find operations only, include find_result (the returned root label).\nUse every label exactly once as a state key. Start your response with { and end it with }. Return no prose, reasoning text, tags, or Markdown."
+  },
+  {
+    "case_id": "diag_0007__extract_text",
+    "task_id": "diag_0007",
+    "control": "extract_text",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: {\"A\":\"N\",\"B\":\"J\",\"C\":\"N\",\"D\":\"G\",\"E\":\"D\",\"F\":\"A\",\"G\":\"G\",\"H\":\"H\",\"I\":\"G\",\"J\":\"K\",\"K\":\"K\",\"L\":\"K\",\"M\":\"P\",\"N\":\"N\",\"O\":\"H\",\"P\":\"H\"}\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0005__extract_rendered",
+    "task_id": "diag_0005",
+    "control": "extract_rendered",
+    "condition": "R-dir",
+    "image": "img_00009.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: see the attached PNG.\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0005__update_diagram",
+    "task_id": "diag_0005",
+    "control": "update_diagram",
+    "condition": "G-dir",
+    "image": "img_00010.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. find(x) follows parents to a root, fully compresses the traversed path, and returns the root.\nunion(a,b) first runs find(a) and find(b), including their path compression. A set's size counts all elements whose root is that set's root, not just direct children. If roots differ, attach the smaller set's root under the larger set's root. If sizes tie, attach b's root under a's root. If roots are equal, do not merge.\nThe initial state is a parent map. In a diagram, each arrow points from child to parent; roots have no outgoing arrow.\nWorked examples below are separate from this task; do not copy their states into your answer.\nExample 1: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"C\",\"D\":\"C\"}; union(B,D) finds roots A and C, each of size 2, so C attaches under A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}}.\nExample 2: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}; find(D) returns A and changes the parent of D to A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"},\"find_result\":\"A\"}.\nInitial state: see the attached PNG.\nOperations:\n1. union(L,B)\nReturn a JSON object with steps.\nsteps must be an array with one object per operation in order. Each object has op (1-based operation number) and state (the full parent map after that operation). For find operations only, include find_result (the returned root label).\nUse every label exactly once as a state key. Start your response with { and end it with }. Return no prose, reasoning text, tags, or Markdown."
+  },
+  {
+    "case_id": "diag_0002__extract_text",
+    "task_id": "diag_0002",
+    "control": "extract_text",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: {\"A\":\"C\",\"B\":\"G\",\"C\":\"C\",\"D\":\"E\",\"E\":\"C\",\"F\":\"B\",\"G\":\"G\",\"H\":\"G\"}\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0001__copy_solution",
+    "task_id": "diag_0001",
+    "control": "copy_solution",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nThe following is the simulator-supplied correct solution. Copy this JSON object exactly; no calculation is needed. Preserve every step, label, parent, and find result. Return no other fields, prose, or Markdown.\nSolution to copy: {\"steps\":[{\"op\":1,\"state\":{\"A\":\"H\",\"B\":\"G\",\"C\":\"H\",\"D\":\"C\",\"E\":\"H\",\"F\":\"H\",\"G\":\"C\",\"H\":\"H\"}}]}"
+  },
+  {
+    "case_id": "diag_0008__extract_text",
+    "task_id": "diag_0008",
+    "control": "extract_text",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: {\"A\":\"O\",\"B\":\"B\",\"C\":\"C\",\"D\":\"G\",\"E\":\"I\",\"F\":\"M\",\"G\":\"C\",\"H\":\"O\",\"I\":\"I\",\"J\":\"I\",\"K\":\"J\",\"L\":\"A\",\"M\":\"M\",\"N\":\"C\",\"O\":\"O\",\"P\":\"B\"}\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0006__copy_solution",
+    "task_id": "diag_0006",
+    "control": "copy_solution",
+    "condition": "T-dir",
+    "image": null,
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P.\nThe following is the simulator-supplied correct solution. Copy this JSON object exactly; no calculation is needed. Preserve every step, label, parent, and find result. Return no other fields, prose, or Markdown.\nSolution to copy: {\"steps\":[{\"find_result\":\"P\",\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"B\",\"C\":\"B\",\"D\":\"I\",\"E\":\"E\",\"F\":\"P\",\"G\":\"P\",\"H\":\"K\",\"I\":\"I\",\"J\":\"O\",\"K\":\"I\",\"L\":\"P\",\"M\":\"E\",\"N\":\"A\",\"O\":\"O\",\"P\":\"P\"}}]}"
+  },
+  {
+    "case_id": "diag_0004__extract_rendered",
+    "task_id": "diag_0004",
+    "control": "extract_rendered",
+    "condition": "R-dir",
+    "image": "img_00007.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. Each diagram arrow points from child to parent; roots have no outgoing arrow.\nInitial state: see the attached PNG.\nTranscribe the initial parent map only. There are no operations to perform. Return {\"transcription\":{...}} with every label exactly once as a key and its parent label as the value. Return no other fields, prose, or Markdown."
+  },
+  {
+    "case_id": "diag_0003__update_diagram",
+    "task_id": "diag_0003",
+    "control": "update_diagram",
+    "condition": "G-dir",
+    "image": "img_00006.png",
+    "system_prompt": "Simulate the DSU operations exactly. Return one JSON object only. Do not include explanations, reasoning text, tags, Markdown, or code fences. The response must begin with { and end with }.",
+    "user_prompt": "Disjoint-set union over labels A, B, C, D, E, F, G, H.\nA root is its own parent. find(x) follows parents to a root, fully compresses the traversed path, and returns the root.\nunion(a,b) first runs find(a) and find(b), including their path compression. A set's size counts all elements whose root is that set's root, not just direct children. If roots differ, attach the smaller set's root under the larger set's root. If sizes tie, attach b's root under a's root. If roots are equal, do not merge.\nThe initial state is a parent map. In a diagram, each arrow points from child to parent; roots have no outgoing arrow.\nWorked examples below are separate from this task; do not copy their states into your answer.\nExample 1: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"C\",\"D\":\"C\"}; union(B,D) finds roots A and C, each of size 2, so C attaches under A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}}.\nExample 2: start {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"C\"}; find(D) returns A and changes the parent of D to A. The resulting state is {\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"}. The step is {\"op\":1,\"state\":{\"A\":\"A\",\"B\":\"A\",\"C\":\"A\",\"D\":\"A\"},\"find_result\":\"A\"}.\nInitial state: see the attached PNG.\nOperations:\n1. find(F)\n2. union(B,C)\n3. union(F,D)\n4. union(A,H)\nReturn a JSON object with steps.\nsteps must be an array with one object per operation in order. Each object has op (1-based operation number) and state (the full parent map after that operation). For find operations only, include find_result (the returned root label).\nUse every label exactly once as a state key. Start your response with { and end it with }. Return no prose, reasoning text, tags, or Markdown."
+  }
+]

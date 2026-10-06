@@ -2,6 +2,8 @@
 
 **Status: proposed future work, 6 October 2026.** Motivated by the completed [main study](../MAIN_RESULTS.md), this proposal describes a diagnostic pilot and requirements for later confirmation. It has not been implemented or run. Exact prompts, schemas, and confirmation sample size still require a separate frozen protocol.
 
+**Implementation update, 7 October 2026:** the fixed diagnostic pilot now has frozen inputs, exact prompts, validated collection/recovery code, and a [Kaggle execution guide](DIAGNOSTICS.md). No diagnostic pilot model responses have been collected. The intervention experiments and confirmation study remain future work. The original proposal below is retained as a dated planning record.
+
 ## Motivation
 
 The completed study found:
