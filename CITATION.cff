@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "Please cite this software and its accompanying main-results report when using VisDSR."
+type: software
+title: "VisDSR: Evaluating DSU Reasoning from Text and Diagrams"
+authors:
+  - given-names: Abhishek
+    family-names: R P
+version: v2.0-results
+date-released: 2026-10-06
+repository-code: "https://github.com/Abhishekgit01/VisDSR"
+url: "https://github.com/Abhishekgit01/VisDSR/releases/tag/v2.0-results"
+abstract: >-
+  Reproducible evaluation of disjoint-set union reasoning across text,
+  rendered text, and forest diagrams. The frozen main study contains 80
+  paired tasks, five conditions, and 800 independent Qwen3-VL and
+  InternVL3.5 responses. Raw responses, exact scoring, paired analysis,
+  and the report are supplied; low accuracy limits modality conclusions.
