@@ -1,0 +1,62 @@
+name: CPU checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: '3.11'
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y g++ graphviz fonts-dejavu-core
+      - name: Install base Python dependencies
+        run: python -m pip install -r environment/requirements.txt
+      - name: Verify frozen study sources
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          record = json.loads(Path("FREEZE.json").read_text())
+          expected = record["source_hashes"]
+          mismatches = []
+          for name, wanted in expected.items():
+              path = Path(name)
+              if not path.is_file():
+                  mismatches.append(name)
+              elif hashlib.sha256(path.read_bytes()).hexdigest() != wanted:
+                  mismatches.append(name)
+          if mismatches:
+              raise SystemExit("Frozen sources differ: " + ", ".join(mismatches))
+          print(f"Verified {len(expected)} frozen study sources")
+          PY
+      - name: Build simulator
+        run: make build
+      - name: Lint Python
+        run: make lint
+      - name: Test infrastructure
+        run: make test
+      - name: Compare simulator with independent reference
+        run: make stress
