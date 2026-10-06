@@ -107,6 +107,8 @@ A separate **96-request diagnostic pilot** is prepared to test initial-state ext
 
 The [diagnostic guide and Kaggle notebook](docs/DIAGNOSTICS.md) provide the exact protocol, one overnight run for both models, recovery steps, and decision gate. The [research review](docs/ACCURACY_FLOOR_RESEARCH.md) connects the completed response audit to primary literature and possible later interventions.
 
+A separately frozen [improvement comparison](docs/INTERVENTIONS.md) adds procedural-prompt and constrained-JSON arms, reuses the identical diagnostic baselines, and evaluates a model-plus-executor system using the actual extractions. Its overnight notebook collects **192 unique calls** across both models, using separate T4s in parallel when available. Collection is pending; no improvement is claimed before measurement.
+
 ## Check locally
 
 Requires Python 3.11+, a C++17 compiler, Graphviz, and DejaVu fonts.
@@ -129,6 +131,7 @@ make stress
 | [`analysis/`](analysis/) | Paired statistics and figures |
 | [`study_transfer.py`](study_transfer.py) | Checked v2 backup export and restore |
 | [`diagnostics/`](diagnostics/) | Separate frozen diagnostic inputs, bounded collection, scoring, and recovery |
+| [`interventions/`](interventions/) | Fixed prompt/grammar comparison, verified executor, parallel collection, and combined recovery |
 | [`tests/`](tests/) | Independent DSU reference and infrastructure checks |
 | [Algorithm explanation and implementation provenance](STUDENT_UNDERSTANDING.md) | DSU rules, condition controls, and AI-assisted work |
 
@@ -136,7 +139,7 @@ make stress
 
 The [documentation index](docs/README.md) separates the completed study from the preserved planning documents, calibration logs, and historical v1 feasibility results. Historical responses are not pooled with v2.
 
-The [6 October follow-up proposal](docs/FOLLOW_UP.md) is retained as a dated planning record. Its diagnostic pilot now has a validated implementation; no follow-up model results have been collected. Intervention experiments and held-out confirmation remain future work.
+The [6 October follow-up proposal](docs/FOLLOW_UP.md) is retained as a dated planning record. Its diagnostic pilot and a separately specified improvement comparison now have validated implementations; no follow-up model results have been collected. Held-out confirmation remains future work.
 
 Completed datasets and raw-response archives are distributed as release assets. Small reviewed examples and the fixed diagnostic input panel are included in the repository.
 

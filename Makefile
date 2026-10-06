@@ -10,7 +10,7 @@ stress: build
 	python -m tests.stress
 
 lint:
-	python -m pycodestyle --ignore=E501 visdsr.py manifest.py study_transfer.py notebooks/kaggle_diagnostics.py notebooks/kaggle_main.py gen eval analysis diagnostics tests
+	python -m pycodestyle --ignore=E501 visdsr.py manifest.py study_transfer.py notebooks/kaggle_diagnostics.py notebooks/kaggle_main.py gen eval analysis diagnostics interventions tests
 
 pilot:
 	python -m gen.generate --split pilot --structure dsu

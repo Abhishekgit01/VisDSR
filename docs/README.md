@@ -21,6 +21,8 @@ The current study is complete. Planning documents and earlier collection logs re
 
 [Accuracy-floor research review](ACCURACY_FLOOR_RESEARCH.md) combines a dated exploratory audit of all 800 main responses with primary literature and official model documentation. It prioritizes controlled interventions and gives bounded call counts; none of the proposed interventions has been evaluated.
 
+[The fixed improvement comparison](INTERVENTIONS.md) implements the prospective prompt/grammar comparison and a separately labelled model-plus-executor baseline. Its overnight notebook collects 192 unique calls, reusing identical diagnostic updates, and can run the two models on separate T4s. Model collection is pending.
+
 ## Preserved v2 planning and calibration
 
 | Document | Role |

@@ -1,0 +1,2 @@
+# Added only for the separate intervention protocol. Original study pins remain unchanged.
+xgrammar==0.2.8

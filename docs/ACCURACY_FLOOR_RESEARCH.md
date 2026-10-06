@@ -1,8 +1,8 @@
 # Investigating the VisDSR accuracy floor
 
-**Research review, 7 October 2026.** This document combines an exploratory audit of the completed main responses with primary literature and official model documentation. The proposed interventions have not been implemented or evaluated. The [published main results](../MAIN_RESULTS.md) remain the record of the frozen experiment.
+**Research review, 7 October 2026.** This document combines an exploratory audit of the completed main responses with primary literature and official model documentation. The interventions have not been evaluated. The [published main results](../MAIN_RESULTS.md) remain the record of the frozen experiment.
 
-**Implementation update:** the [fixed diagnostic pilot](DIAGNOSTICS.md) is now prepared and locally validated. GPU collection is pending; the accuracy interventions discussed below have not been evaluated.
+**Implementation update:** the [fixed diagnostic pilot](DIAGNOSTICS.md) and a separate [prompt/grammar improvement comparison](INTERVENTIONS.md) with a model-plus-executor baseline are now prepared and locally validated. GPU collection is pending. Native reasoning, presentation changes, precision changes, training, and held-out confirmation remain proposals.
 
 ## Recommendation
 
@@ -155,4 +155,4 @@ If grammar improves compliance while calculation remains weak, the next candidat
 
 ## Scope of this review
 
-The cache audit ran without loading model weights or generating new answers. All interventions and call counts above are proposals. The research supports experiments with identifiable controls; it supplies no reliable percentage forecast for DSU accuracy or ACM selection.
+The cache audit ran without loading model weights or generating new answers. The call counts above were specified before follow-up inference; the implementation update identifies which experiments are now ready. The research supports experiments with identifiable controls; it supplies no reliable percentage forecast for DSU accuracy or ACM selection.

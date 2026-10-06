@@ -4,6 +4,8 @@
 
 The [research review](ACCURACY_FLOOR_RESEARCH.md) explains why these controls are the next step. Grammar constraints, procedural-prompt ablations, native thinking modes, and assisted execution remain proposed interventions; this notebook does not enable them.
 
+A separate [improvement-comparison notebook](INTERVENTIONS.md) now collects these same 96 controls plus 96 fixed prompt/grammar intervention requests in one run, with a separate executor evaluation. Compatible diagnostic backups remain usable. Use that notebook to collect both experiments together; this guide describes the preserved diagnostic-only workflow.
+
 ## Fixed protocol
 
 | Item | Setting |
