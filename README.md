@@ -8,17 +8,17 @@ DSU makes every intermediate state checkable while requiring path compression, s
 
 ## Current results
 
-Qwen's main run is complete and audited: **400/400 responses**, with 80 per condition. InternVL's main run is next; both calibrations are complete.
+Both main runs are complete and audited: **400 Qwen + 400 InternVL responses**, with 80 per condition for each model. Both calibrations are also complete.
 
-| Qwen main condition | Correct final maps | Format failures |
+| Main condition | Qwen correct final maps | InternVL correct final maps |
 | --- | ---: | ---: |
-| T-dir | 0/80 | 1/80 |
-| R-dir | 0/80 | 26/80 |
-| G-dir | 0/80 | 37/80 |
-| T-str | 3/80 | 50/80 |
-| G-str | 0/80 | 24/80 |
+| T-dir | 0/80 | 2/80 |
+| R-dir | 0/80 | 0/80 |
+| G-dir | 0/80 | 0/80 |
+| T-str | 3/80 | 2/80 |
+| G-str | 0/80 | 0/80 |
 
-The completed Qwen run has 3/400 correct final maps, 138 format failures, and 62 responses that reached the output-token cap. Raw responses were scored without repairs or retries. Zero accuracy in both primary conditions limits interpretation of the modality comparison; it does not establish equivalence. The [Qwen main results and verification](QWEN_MAIN_RESULTS.md) records the audit and reproduction limits. Combined analysis awaits InternVL's 400 main responses.
+Qwen has 3/400 correct final maps and 138 format failures; InternVL has 4/400 and 281. Raw responses were scored without repairs or retries. The primary T-dir minus G-dir differences are 0.00 and 2.50 percentage points, respectively; both Holm-adjusted exact p-values are 1.00. Low accuracy and frequent schema failures limit interpretation and do not establish modality equivalence. The [combined main results and verification](MAIN_RESULTS.md) records the paired analysis, output caps, recovery audit, and reproduction limits. The [main-results release](https://github.com/Abhishekgit01/VisDSR/releases/tag/v2.0-results) includes the original inputs and all raw responses; [reproduce the scores without a GPU](REPRODUCE_MAIN.md).
 
 The separate calibration results are:
 
@@ -73,7 +73,7 @@ flowchart BT
 
 The [exact diagram input](docs/examples/dsu-forest.png) and [complete task with expected answers](docs/examples/dsu-task.json) are included. The PNG is copied unchanged from the audited calibration input. The diagram above illustrates the forest for this README; model calls use the original PNG. These are simulator answers, and model responses are scored against them.
 
-The planned main study has 80 fresh tasks, five conditions, and two open-weight families: [Qwen3-VL-8B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct) and [InternVL3.5-8B-HF](https://huggingface.co/OpenGVLab/InternVL3_5-8B-HF). That is 800 independent responses. Models use pinned revisions, local 4-bit NF4 weights, and greedy decoding. No paid inference API is used.
+The completed main study has 80 fresh tasks, five conditions, and two open-weight families: [Qwen3-VL-8B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct) and [InternVL3.5-8B-HF](https://huggingface.co/OpenGVLab/InternVL3_5-8B-HF). That is 800 independent responses. Models use pinned revisions, local 4-bit NF4 weights, and greedy decoding. No paid inference API is used.
 
 The primary measure is final-parent-map exact match. The primary comparison is **T-dir minus G-dir**, paired by task. Secondary measures include full-sequence correctness, transcription accuracy, and format errors. The [freeze record](FREEZE.json) contains the audited calibration summaries and protected source hashes. Preparation does not establish a modality effect.
 
@@ -93,7 +93,22 @@ python -m analysis.analyze --split pilot2 --models model1 model2
 
 These commands recompute calibration scores without a GPU, model weights, or inference. Calibration comparisons are descriptive; they are separate from the planned main analysis. Percentile bootstrap intervals at an accuracy floor can be degenerate and do not establish equivalence.
 
+## Reproduce the main results
+
+Download the audited archive and checksums from the [results release](https://github.com/Abhishekgit01/VisDSR/releases/tag/v2.0-results). In a fresh results-tag checkout, install the base dependencies, restore the archive, and recompute:
+
+```bash
+python -m study_transfer --restore visdsr-main-results.zip
+python -m eval.run --split main --model model1 --score-only
+python -m eval.run --split main --model model2 --score-only
+python -m analysis.analyze --split main --models model1 model2
+```
+
+The [reproduction guide](REPRODUCE_MAIN.md) includes dependency installation, download and checksum commands, calibration replay, and byte-for-byte CSV comparison. No model weights, GPU, API key, or paid service is needed for cached scoring. [Citation metadata](CITATION.cff) is included.
+
 ## Run on Kaggle
+
+Official collection is complete. The notebooks below are retained for inference replication; they are not needed to reproduce the released scores.
 
 For a first run, import the Qwen notebook into Kaggle:
 
@@ -109,7 +124,7 @@ The v2 project folder is `/kaggle/working/VisDSR_v2`. Its backup checks source f
 
 Every completed response is cached immediately; each bounded run also exports automatically. A lost runtime can still lose files that have not been exported and saved outside the session. Do not rely on Kaggle's temporary disk as the only copy.
 
-### Continue to the frozen main study
+### Main inference runner
 
 After restoring the completed calibration, use the standalone [main runner](notebooks/kaggle_main.py) from the project directory:
 
@@ -119,9 +134,9 @@ python -m notebooks.kaggle_main --model model1 --max-new-calls 100
 
 It verifies the freeze and both calibration sets, generates and validates main inputs when missing, and makes at most 100 new Qwen calls. Rerunning resumes; use `model2` for InternVL after Qwen completes. One model runs at a time. Smaller chunks are supported. Each chunk exports automatically, including after a normal interruption. Download the new backup before continuing or ending the session.
 
-Qwen's 400 main responses have now been verified. To continue with InternVL, import [`internvl35_main_kaggle.ipynb`](notebooks/internvl35_main_kaggle.ipynb) into a new Kaggle notebook and attach the verified completed-Qwen backup as a private Dataset. Enable a free GPU and Internet, then run its two code cells in order. It restores both calibrations and the main inputs, verifies the freeze and original images, and collects InternVL responses in batches of at most 100. Completed Qwen responses are reused unchanged. Download the updated export when finished or interrupted.
+The [`internvl35_main_kaggle.ipynb`](notebooks/internvl35_main_kaggle.ipynb) notebook was used for InternVL collection after Qwen completed. For a separate inference replication, import it into a new Kaggle notebook and attach the appropriate verified backup as a private Dataset. It restores both calibrations and the main inputs, verifies the freeze and original images, and collects only missing InternVL responses in batches of at most 100. Completed Qwen responses are reused unchanged. Use **Save Version > Save & Run All** for a background run and download its saved-version output; an exported ZIP on an interactive runtime's temporary disk is not a durable backup.
 
-InternVL calibration averaged 92.20 seconds per response, giving an estimate of 10.24 hours for 400 calls, excluding setup and interruptions. Actual main duration may differ. InternVL collection, combined analysis, the final report, and the reproducibility release remain outstanding.
+Both main collections have now finished. The [combined results](MAIN_RESULTS.md) documents the audit and score-only reproduction commands. Existing matching caches must be reused; no further inference is required. The results release contains the reviewed reproduction artifact.
 
 ## Check locally
 
@@ -175,4 +190,4 @@ Reviewed private archive SHA-256 checksums:
 - Both Qwen pilots: `f40e0ce44178ef39fb1a87e7ff155d975c31ff270b0ca9ace74ab4390829726b`.
 - InternVL smoke plus preserved Qwen data: `25ca9faf910ad1b6cd537dc2ead0993509cc4cf996c111c0fa963e5a76ecb71b`.
 
-The raw responses and generated data remain outside Git. The public repository alone cannot reproduce those historical numerical results. A final v2 release must include a reviewed reproduction artifact or access instructions, along with the frozen code, audited scores, figures, and report. The project uses clean synthetic images and exact-match scoring; these outputs do not identify a model's internal failure mechanism.
+Raw responses and generated data remain outside Git history. Historical v1 archives have not been released, so their checksums alone do not reproduce those historical results. The v2 calibration and main releases include reviewed reproduction artifacts alongside the frozen code, scores, figures, and report. The project uses clean synthetic images and exact-match scoring; these outputs do not identify a model's internal failure mechanism.

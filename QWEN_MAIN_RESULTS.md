@@ -53,4 +53,4 @@ The original PNG bytes match the freeze and preceding export. Local pixel regene
 
 ## Remaining work
 
-Collect InternVL's 400 main responses on the same frozen inputs, then audit the combined export, recompute the paired analysis, and finish the report and reproduction artifact. Calibration and diagnostics remain separate from main results. No further prompt or task selection is part of the official study.
+At the time of this 5 October review, InternVL collection and the combined audit remained outstanding. **Update, 6 October 2026:** both main collections and the audit are complete. The [combined results](MAIN_RESULTS.md) and [reproduction guide](REPRODUCE_MAIN.md) supersede that pending-work status. Calibration and diagnostics remain separate from main results. No further prompt or task selection is part of the official study.
