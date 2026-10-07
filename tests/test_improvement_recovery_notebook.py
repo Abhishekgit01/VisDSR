@@ -44,6 +44,36 @@ class ImprovementRecoveryNotebookTests(unittest.TestCase):
                 exec(code, {"PARALLEL_MODELS": True})
         command.assert_not_called()
 
+    def test_setup_rejects_interactive_before_installing_or_cloning(self):
+        code = "".join(self.notebook["cells"][3]["source"])
+        for mode in ("Interactive", ""):
+            with self.subTest(mode=mode), \
+                    patch.dict(os.environ, {"KAGGLE_KERNEL_RUN_TYPE": mode}), \
+                    patch("subprocess.run") as command, contextlib.redirect_stdout(io.StringIO()):
+                with self.assertRaisesRegex(RuntimeError, "Save Version > Save & Run All"):
+                    exec(code, {})
+                command.assert_not_called()
+
+    def test_saved_setup_reports_missing_configuration_before_running_commands(self):
+        code = "".join(self.notebook["cells"][3]["source"])
+        with patch.dict(os.environ, {"KAGGLE_KERNEL_RUN_TYPE": "Batch"}), \
+                patch("pathlib.Path.is_dir", return_value=True), \
+                patch("subprocess.run") as command, contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaisesRegex(RuntimeError, "check its Log for the first error"):
+                exec(code, {})
+        command.assert_not_called()
+
+    def test_export_reports_missing_collection_without_writing_or_exporting(self):
+        code = "".join(self.notebook["cells"][7]["source"])
+        with patch("pathlib.Path.is_file", return_value=False), \
+                patch("pathlib.Path.read_text") as read, \
+                patch("pathlib.Path.write_text") as write, patch("subprocess.run") as command:
+            with self.assertRaisesRegex(RuntimeError, "No collection status is available to export"):
+                exec(code, {})
+        read.assert_not_called()
+        write.assert_not_called()
+        command.assert_not_called()
+
     def test_saved_collection_launches_existing_protocol_with_parallel_defaults(self):
         with patch.dict(os.environ, {"KAGGLE_KERNEL_RUN_TYPE": "Batch"}), \
                 patch("subprocess.run") as command, contextlib.redirect_stdout(io.StringIO()):
